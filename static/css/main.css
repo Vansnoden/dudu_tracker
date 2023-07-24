@@ -2,3 +2,17 @@
     min-height: 85vh;
     padding: 1.5em;
 }
+
+legend.scheduler-border {
+    width:inherit; /* Or auto */
+    padding:0 10px; /* To give a bit of padding on the left and right */
+    border-bottom:none;
+}
+
+.hg-100{
+    height: 80vh!important;
+}
+
+.hg-50{
+    height: 39.55vh!important;
+}

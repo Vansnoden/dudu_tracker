@@ -17,22 +17,94 @@
 <body>
 
     <header class="border-bottom">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white p-3">
-            <a class="navbar-brand" href="#">K-MAP</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" 
-                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
-                aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home<span class="sr-only">*</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                </ul>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">K-MAP</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" 
+                                href="#" id="navbarDropdown1" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                File
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                                <li>
+                                    <a class="dropdown-item" href="#">Select project folder</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" 
+                                href="#" id="navbarDropdown2" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Shape files
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                                <li>
+                                    <a class="dropdown-item" href="#">shp file</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">dbf file</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">shx file</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" 
+                                href="#" id="navbarDropdown3" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Grid/Neigbourhood
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown3">
+                                <li>
+                                    <a class="dropdown-item" href="#">Produce grid</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Produce neigbourhood</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" 
+                                href="#" id="navbarDropdown4" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Import data
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown4">
+                                <li>
+                                    <a class="dropdown-item" href="#">Constraint 1</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Constraint 2</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Constraint 3</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Constraint 4</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" 
+                                href="#" id="navbarDropdown5" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Affected area
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown5">
+                                <li>
+                                    <a class="dropdown-item" href="#">Starting area</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
@@ -47,9 +119,9 @@
                 copyright icipe@2023
             </center>
         </div>
-        <script src="{% static 'js/jquery-3.7.js'%}"/>
-        <script src="{% static 'js/bootstrap.min.js'%}"/>
-        <script src="{% static 'js/main.js'%}"/>
+        <script type="text/javascript" src="{% static 'js/jquery.js'%}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
+        <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
         {% block custom_js %}{% endblock custom_js %}
     </footer>
     

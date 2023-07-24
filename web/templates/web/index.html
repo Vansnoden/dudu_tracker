@@ -1,9 +1,187 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block page_title %}Home{% endblock page_title %}
 
-{% block page_content %}
-Test
-{% endblock page_content %}
+{% block main_content %}
+<div class="container-fluid row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <form action="#" method="post">
+            <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12 p-2">
+                    <fieldset class="border p-2 hg-100">
+                        <legend class="float-none w-auto p-2">
+                            Data inputs
+                        </legend>
+                        <div>
+                            <div class="form-inline d-flex justify-content-between align-items-center">
+                                <label for="c1">Constraint 1 upper limit</label>
+                                <input type="number" id="c1" name="c1"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c11">Constraint 1 lower limit</label>
+                                <input type="number" id="c11" name="c11"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c2">Constraint 2 upper limit</label>
+                                <input type="number" id="c2" name="c2"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c22">Constraint 2 lower limit</label>
+                                <input type="number" id="c22" name="c22"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c3">Constraint 3 upper limit</label>
+                                <input type="number" id="c3" name="c3"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c33">Constraint 3 lower limit</label>
+                                <input type="number" id="c33" name="c33"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c4">Constraint 4 upper limit</label>
+                                <input type="number" id="c4" name="c4"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="c44">Constraint 4 lower limit</label>
+                                <input type="number" id="c44" name="c44"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="cs">Cell size (km)</label>
+                                <input type="number" id="cs" name="cs"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                <label for="ts">Travel speed (Km/time)</label>
+                                <input type="number" id="ts" name="ts"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12 p-2">
+                    <fieldset class="border p-2 hg-50">
+                        <legend class="float-none w-auto p-2">
+                            Starting period
+                        </legend>
+                        <div>
+                            <div class="form-inline d-flex justify-content-between align-items-center">
+                                <label for="">Months</label>
+                                <select id="month" name="month">
+                                    {% for month in months %}
+                                    <option value="{{month}}">{{month}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-4">
+                                <label for="year">Year</label>
+                                <input type="number" id="year" name="year"/>
+                            </div>
+                            <div class="form-inline d-flex justify-content-between align-items-center mt-4">
+                                <label for="">Time step</label>
+                                <select id="tstep" name="tstep">
+                                    {% for step in tsteps %}
+                                    <option value="{{step}}">{{step}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="border p-2 mt-2 hg-50">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" 
+                                    id="calibration-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#calibration" type="button" 
+                                    role="tab" aria-controls="calibration" 
+                                    aria-selected="true">
+                                    Calibration
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" 
+                                    id="run-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#run" type="button" 
+                                    role="tab" aria-controls="run" 
+                                    aria-selected="false">
+                                    Run
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" 
+                                id="calibration" role="tabpanel" 
+                                aria-labelledby="calibration-tab">
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <label for="lat">Lat</label>
+                                    <input type="number" id="lat" name="lat"/>
+                                </div>
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <label for="lon">Lon</label>
+                                    <input type="number" id="lon"/>
+                                </div>
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <label for="month2">Month</label>
+                                    <select id="month2" name="month2">
+                                        {% for month in months %}
+                                        <option value="{{month}}">{{month}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <label for="year">Year</label>
+                                    <input type="number" id="year"/>
+                                </div>
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <label for="diff">Diff = </label>
+                                    <input type="text" placeholder="-----" id="diff" name="diff" disabled="true"/>
+                                </div>
+                                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                    <button type="submit">Calibrate</button>
+                                    <button type="cancel">Stop</button>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" 
+                                id="run" role="tabpanel" 
+                                aria-labelledby="run-tab">
+                                <form>
+                                    <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                        <label for="duration">Duration</label>
+                                        <input type="number" id="duration"/>
+                                    </div>
+                                    <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                                        <button type="submit">Run</button>
+                                        <button type="cancel">Stop</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>              
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12 p-2">
+        <fieldset class="border p-2 hg-100">
+            <legend class="float-none w-auto p-2">
+                Outputs
+            </legend>
+            <div class="">
+                <div class="container col-4 form-inline d-flex justify-content-around align-items-center">
+                    <div>
+                        <span>Simulation: </span>
+                        <span id="sim_num">----</span>
+                    </div>
+                    <div>
+                        <span>Out of: </span>
+                        <span id="sim_total">----</span>
+                    </div>
+                </div>
+                <div class="py-3" id="map">
+                    {% comment %} map here {% endcomment %}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock main_content %}
 
 
