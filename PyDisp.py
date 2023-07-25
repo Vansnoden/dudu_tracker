@@ -71,11 +71,6 @@ def importAffected(affectedNumber):
 
 def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
     try:
-        
-        
-        
-        
-        
         #----------------------------------stat progress------------------------------------------------
         showProgress("indeterminate", "Importing " + affectedNumberInaffected + " area data")
         docmExtn = os.path.splitext(dataPathInaffected)[1]

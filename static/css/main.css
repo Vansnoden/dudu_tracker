@@ -52,6 +52,15 @@ legend.scheduler-border {
     width: 50%;
 }
 
+#config-show{
+    font-size: 2rem;
+    text-align: center;
+    padding: 10px!important;
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+
 .dropdown-menu{
     z-index: 12000!important;
 }
@@ -115,6 +124,12 @@ legend.scheduler-border {
 }
 
 #constrains{
+    position: absolute;
+    left: 2em;
+    top: 15vh;
+}
+
+#config{
     position: absolute;
     left: 2em;
     top: 15vh;

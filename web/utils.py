@@ -5,40 +5,64 @@ from tkinter.messagebox import showerror
 from tkinter.messagebox import showinfo
 import threading
 
+
+
+
 from matplotlib_scalebar.scalebar import ScaleBar
+
+
+
+
 import matplotlib
 from matplotlib import pyplot as plt
 from shapely.geometry import Point
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
+
 import geopandas as gpd
+
 import rasterio as rio
 import numpy as np
 import pandas as pd
 import shutil
 import os
+
 import shapefile as shp
 import math
+
+
 
 
 plt.ioff()
 
 
+
+
 # functions
+
+
 
 
 def importAffected(affectedNumber):
     try:
         dataPath = filedialog.askopenfilename(title="Import " + affectedNumber + " area data", 
                                               filetypes=[("xlsx files", "*.xlsx"), ("xls files", "*.xls"), ("csv files", "*.csv")])
+        
         dataPath = r"{}".format(dataPath)
+        
+        
+        
         if dataPath:
             def real_start():
                 importAffectedThreadStat(dataPath, affectedNumber)
+            
             threading.Thread(target=real_start).start()
+                
         else:
             showerror(title=("Import error"), message=("Please import " + affectedNumber + " area data"))
+            
     except Exception as err:
         showerror(title=("Fatal error"), message=(err))
 
@@ -54,6 +78,7 @@ def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
         gridForDataImport = pd.read_csv(r"{}".format(pathname+"/resources/data/grid.csv")).to_numpy()
         if docmExtn==".xlsx" or docmExtn==".xls":
             dataImpt = readData(dataPathInaffected, "xlsx")
+        
         elif docmExtn==".csv":
             dataImpt = readData(dataPathInaffected, "csv")
         else:
@@ -65,7 +90,8 @@ def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
             origin = dataImpt[countrow]
             rangeDistance = distance(origin, gridForDataImport)
             coloData = np.union1d(coloData, np.where(rangeDistance==np.min(rangeDistance))[0][0])
-
+            
+        
         datafileFolder = r"{}".format(pathname+"/resources/data")
         
         
@@ -73,6 +99,8 @@ def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
             os.makedirs(datafileFolder)
         
         dataDestination = r"{}".format(pathname+"/resources/data/" + affectedNumberInaffected + ".csv")
+        
+        
         
         if os.path.isfile(dataDestination):
             os.remove(dataDestination)
@@ -96,6 +124,11 @@ def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
 
 def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
     try:
+        
+        
+        
+        
+        
         #----------------------------------stat progress------------------------------------------------
         showProgress("indeterminate", "Importing " + ConstraintNumberInConst + " data")
         docmExtn = os.path.splitext(dataPathInConst)[1]
@@ -113,13 +146,17 @@ def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
             dataImpt = readData(dataPathInConst, "csv")
         else:
             showerror(title=("Import error"), message=("Please import a valid .tif, .xlsx, .xls or .csv data"))
+            
         
         datafileFolder = r"{}".format(pathname+"/resources/data")
+        
         
         if not os.path.isdir(datafileFolder):
             os.makedirs(datafileFolder)
         
         dataDestination = r"{}".format(pathname+"/resources/data/" + ConstraintNumberInConst + ".csv")
+        
+        
         
         if os.path.isfile(dataDestination):
             os.remove(dataDestination)
@@ -148,6 +185,8 @@ def importConstraint(ConstraintNumber):
 #                                              filetypes=[("tif files", "*.tif"), ("xlsx files", "*.xlsx"), ("xls files", "*.xls"), ("csv files", "*.csv")])
         
         dataPath = r"{}".format(dataPath)
+        
+        
         
         if dataPath:
             def real_start():
@@ -280,6 +319,10 @@ def prodGrid():
     def real_start():
     
         try:
+            
+            
+            
+            
             
             #----------------------------------stat progress------------------------------------------------
             showProgress("indeterminate", "Producing grid")
