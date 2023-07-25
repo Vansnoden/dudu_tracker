@@ -48,91 +48,54 @@
     <div class="flotable" id="config">
         <span class="fa fa-close" style="float:right" id="config-hide"></span>
         <div class="p-2">
-            <h5>Main Configurations panel</h5>
-            <hr/>
-            <div class="">
-                <label for="pfolder">Project folder</label><br/>
-                <input type="file" id="pfolder" name="pfolder"/>
-            </div>
-            <div class="mt-3">
-                <label for="shp_file">Shape file (shp)</label><br/>
-                <input type="file" id="shp_file" name="shp_file"/>
-            </div>
-            <div class="mt-3">
-                <label for="dbf_file">Shape file (dbf)</label><br/>
-                <input type="file" id="dbf_file" name="dbf_file"/>
-            </div>
-            <div class="mt-3">
-                <label for="shx_file">Shape file (shx)</label><br/>
-                <input type="file" id="shx_file" name="shx_file"/>
-            </div>
-            <h6>Constraints</h6>
-            <hr/>
-            <div class="mt-3">
-                <label for="num_con">Number of constraints</label><br/>
-                <input type="number" id="num_cons" name="num_cons"/>
-            </div>
-            <div id="constraint_fields"></div>
-            <hr/>
-            <div class="mt-3">
-                <label for="affected_area">Starting affected area</label><br/>
-                <input type="file" id="affected_area" name="affected_area"/>
-            </div>
-            <hr/>
-            <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
-                <button class="btn btn-success" id="save_configs">Save configurations</button>
-            </div>
-                
+            <form id="config-form">
+                <h5>Main Configurations panel</h5>
+                <hr/>
+                <div class="">
+                    <label for="pfolder">Project folder</label><br/>
+                    <input type="file" id="pfolder" name="pfolder" required/>
+                </div>
+                <div class="mt-3">
+                    <label for="shp_file">Shape file (shp)</label><br/>
+                    <input type="file" id="shp_file" name="shp_file" required/>
+                </div>
+                <div class="mt-3">
+                    <label for="dbf_file">Shape file (dbf)</label><br/>
+                    <input type="file" id="dbf_file" name="dbf_file" required/>
+                </div>
+                <div class="mt-3">
+                    <label for="shx_file">Shape file (shx)</label><br/>
+                    <input type="file" id="shx_file" name="shx_file" required/>
+                </div>
+                <h6>Constraints</h6>
+                <hr/>
+                <div class="mt-3">
+                    <label for="num_con">Number of constraints</label><br/>
+                    <input type="number" id="num_cons" name="num_cons" required/>
+                </div>
+                <div id="constraint_fields"></div>
+                <hr/>
+                <div class="mt-3">
+                    <label for="affected_area">Starting affected area</label><br/>
+                    <input type="file" id="affected_area" name="affected_area" required/>
+                </div>
+                <hr/>
+                <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
+                    <button class="btn btn-success" id="save_configs">Save configurations</button>
+                </div>
+            </form>        
         </div>
     </div>
     <div class="flotable" id="constrains">
         <span class="fa fa-close" style="float:right" id="constraint-dispose"></span>
         <div class="p-2">
-            <fieldset class="border p-2 hg-100">
+            <fieldset class="border p-2">
                 <legend class="float-none w-auto p-2">
-                    Data inputs
+                    Contraints configuration
                 </legend>
-                <div>
-                    <div class="">
-                        <label for="c1">Constraint 1 upper limit</label><br/>
-                        <input type="number" id="c1" name="c1"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c11">Constraint 1 lower limit</label><br/>
-                        <input type="number" id="c11" name="c11"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c2">Constraint 2 upper limit</label><br/>
-                        <input type="number" id="c2" name="c2"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c22">Constraint 2 lower limit</label><br/>
-                        <input type="number" id="c22" name="c22"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c3">Constraint 3 upper limit</label><br/>
-                        <input type="number" id="c3" name="c3"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c33">Constraint 3 lower limit</label><br/>
-                        <input type="number" id="c33" name="c33"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c4">Constraint 4 upper limit</label><br/>
-                        <input type="number" id="c4" name="c4"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="c44">Constraint 4 lower limit</label><br/>
-                        <input type="number" id="c44" name="c44"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="cs">Cell size (km)</label><br/>
-                        <input type="number" id="cs" name="cs"/>
-                    </div>
-                    <div class="mt-3">
-                        <label for="ts">Travel speed (Km/time)</label><br/>
-                        <input type="number" id="ts" name="ts"/>
-                    </div>
+                <div id="constraints_conf"></div>
+                <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
+                    <button class="btn btn-success" id="save_const">Update constraints</button>
                 </div>
             </fieldset>
         </div>

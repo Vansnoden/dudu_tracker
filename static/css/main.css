@@ -112,7 +112,7 @@ legend.scheduler-border {
     width: -moz-fit-content;
     height: fit-content;
     height: -moz-fit-content; 
-    max-height: 60vh;
+    max-height: 80vh;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     overflow: scroll;
