@@ -46,3 +46,6 @@ tk==0.1.0
 tomli==2.0.1
 typing_extensions==4.7.1
 tzdata==2023.3
+crispy-bootstrap5
+django-crispy-forms
+python-dotenv

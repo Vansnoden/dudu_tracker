@@ -1,0 +1,24 @@
+version: '3'
+services:
+  monade_web:
+    build: .
+    env_file: .env
+    environment:
+      MYENV: venv
+    volumes:
+      - .:/code
+    command: 
+      - /bin/sh
+      - -c
+      - "python3 manage.py migrate | python3 manage.py collectstatic | python3 manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - monade_db
+  monade_db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - db:/var/lib/postgresql/data/pgdata
+volumes:
+  db:

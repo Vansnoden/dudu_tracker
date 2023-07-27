@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Login{% endblock page_title %}
+
+{% block content %}
+<div class="connect-bg10" style="min-height:88vh";>
+    <div class="container row m-auto p-5">
+        <div class="bg-light col-md-4 col-sm-12 m-auto mt-4 border rounded p-4" style="opacity:0.9">
+            <h1>Login here :</h1>
+            <form method="post" action="{% url 'authentication:user_login' %}">
+                {% csrf_token %}
+                {% comment %} <p><label for="username">Username:</label>
+                <input class="form-control" type="text" name="username" placeholder="Username">
+                </p>
+                <p><label for="password">Password:</label>
+                <input class="form-control" type="password" name="password" placeholder="Password">
+                </p>
+                <input class="form-control" type="submit" class="btn btn-outline-success" name="" value="Login"> {% endcomment %}
+                {{ form | crispy }}
+                <input type="submit" class="btn btn-outline-success mt-4" name="" value="Log In">
+                <div class="mt-3">
+                    <a class="nav-link p-0" href="{% url 'authentication:password_reset' %}">Forgot password ?</a>
+                </div>
+                <div class="mt-3">
+                    <a class="nav-link p-0" href="{% url 'authentication:register' %}">Create an account?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

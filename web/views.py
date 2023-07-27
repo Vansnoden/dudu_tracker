@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import shutil
 import threading
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -10,10 +11,11 @@ from pathlib import Path
 from .utils import produce_grid, produce_neighbourhood, MONTHS, TSTEPS, run_model
 import base64
 from django.conf import settings
+from authentication.views import authenticated
 
 # Create your views here.
 
-
+@authenticated
 def home(request):
     # userdata = UserData()
     # constraint = Constraint()
@@ -59,7 +61,7 @@ def get_outputs(request, index=0):
             file_content = base64.b64encode(file.read()).decode('ascii')
         return JsonResponse({
             "num_outputs": count,
-            "next": index + 1 if index < count else 0,
+            "next": index + 1 if index < count - 1 else 0,
             "file": file_content
         })
     except Exception as e:
@@ -70,7 +72,14 @@ def get_outputs(request, index=0):
         })
 
 
+@csrf_exempt
 def process_data_form(request):
+    data_dir = os.path.join(settings.BASE_DIR, "static/data/outputs/png") 
+    csv_dir = os.path.join(settings.BASE_DIR, "static/data/outputs/csv") 
+    if os.path.isfile(data_dir):
+        shutil.rmtree(data_dir)
+    if os.path.isfile(csv_dir):
+        shutil.rmtree(csv_dir)
     data = {
         "project_folder": "",
         "shp_file": "",
@@ -103,10 +112,15 @@ def process_data_form(request):
         )
         cx.save()
         constraints.append(cx)
+
+    duration = int(request.POST["duration"]) if "duration" in request.POST.keys() else 5
+    start_year = int(request.POST["year"]) if "year" in request.POST.keys() else 2020
+    start_month = request.POST["month"] if "month" in request.POST.keys() else "Jan"
+    time_step = request.POST["tstep"] if "tstep" in request.POST.keys() else "Yearly"
     
     produce_grid()
     produce_neighbourhood()
-    run_model(constraints, duration=24, start_month='Jan', start_year=2020, time_step="Yearly")
+    run_model(constraints, duration=duration, start_month=start_month, start_year=start_year, time_step=time_step)
     
     return JsonResponse({
         "success": "ok",

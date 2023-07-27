@@ -68,52 +68,6 @@ def neighbourHoodForrDisp(neighbourHoodFileData, listIdRgExpose, listIdRgInfect)
         showerror(title=("Fatal error"), message=(err))
 
 
-
-# def showProgress(progMode, progMess):
-#     global bar
-#     global progressStrg
-#     global progressLabel
-    
-#     if progMode=="indeterminate":
-#         bar = ttk.Progressbar(apWindow, length=400, mode="indeterminate")
-#         bar.place(x=200, y=10)
-#         bar.start(10)
-#     else:
-#         global percentStrg
-#         global percentLabel
-#         global barrvalu
-        
-#         barrvalu = tk.StringVar()
-#         percentStrg = tk.StringVar()
-        
-#         percentStrg.set("0%")
-#         bar = ttk.Progressbar(apWindow, length=400, mode="determinate",variable = barrvalu)
-#         bar.place(x=200, y=10)
-#         barrvalu.set("0")
-#         percentLabel = ttk.Label(apWindow, textvariable=percentStrg, background=bgColr, width=8)
-#         percentLabel.place(x = 140, y =10)
-        
-#     progressStrg = tk.StringVar()
-#     progressStrg.set(progMess)
-    
-#     progressLabel = ttk.Label(apWindow, textvariable=progressStrg, background=bgColr, width=40)
-#     progressLabel.place(x = 640, y =10)
-
-
-
-
-# def enddProgress(progMode):
-    
-#     if progMode=="indeterminate":
-#         bar.stop()
-#         bar.destroy()
-#         progressLabel.destroy()
-#     else:
-#         bar.destroy()
-#         progressLabel.destroy()
-#         percentLabel.destroy()
-
-
 # functions
 def produce_grid(cellsize=4):
     def real_start():
@@ -228,34 +182,152 @@ def produce_neighbourhood(spedStrg=4):
     threading.Thread(target=real_negh).start()
 
 
+def test_constraints(constraints:list[Constraint], cdatalist, idMax) -> bool:
+    res = True
+    for i in list(range(0, len(constraints))):
+        if cdatalist[i][idMax] <= float(constraints[i].maximum) and cdatalist[i][idMax] > float(constraints[i].minimum):
+            res = res and True
+        else:
+            res = res and False
+    return res
+
+
+def readData(fileLocation, fileExention):
+    try:
+        rawwData = pd.DataFrame()
+        if fileExention=="xlsx":
+            rawwData = pd.read_excel(fileLocation, header=None)
+            if (type(rawwData.iloc[0,0])==str):
+                rawwData = pd.read_excel(fileLocation)
+        else:
+            rawwData = pd.read_csv(fileLocation, header=None)
+            if (type(rawwData.iloc[0,0])==str):
+                rawwData = pd.read_csv(fileLocation)
+        return rawwData.to_numpy()
+    except Exception as err:
+        traceback.print_exc()
+
+
+def importConstraint(dataPath, ConstraintNumber):
+    try: 
+        dataPath = r"{}".format(dataPath)
+        if dataPath:
+            def real_start():
+                importConstraintThreadStat(dataPath, ConstraintNumber)
+            threading.Thread(target=real_start).start()
+        else:
+            showerror(title=("Import error"), message=("Please import " + ConstraintNumber + " data"))
+    except Exception as err:
+        traceback.print_exc()
+
+
+
+def readTiff(filePath, tiffFrme):
+    try:
+        with rio.open(filePath) as tifsrc:
+            tiffdata = tifsrc.read()
+        rowIndex, colIndex = tifsrc.index(tiffFrme["longitude"], tiffFrme["latitude"])
+        nprow = np.array(rowIndex)
+        nprow[nprow>(tiffdata.shape[1]-1)] = tiffdata.shape[1]-1
+        npcol = np.array(colIndex)
+        npcol[npcol>(tiffdata.shape[2]-1)] = tiffdata.shape[2]-1
+        areaData = tiffdata[0, nprow, npcol]
+        areaData[areaData<0] = 0
+        return areaData
+    except Exception as err:
+        showerror(title=("Fatal error"), message=(err))
+
+
+
+def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
+    try:
+        #----------------------------------stat progress------------------------------------------------
+        docmExtn = os.path.splitext(dataPathInConst)[1]
+        dataImpt = np.empty(0)
+        gridForDataImportDestination = os.path.join(settings.BASE_DIR,"static/data/grid.csv")
+        gridForDataImport = pd.read_csv(gridForDataImportDestination)
+        if docmExtn==".tif":
+            dataImpt = readTiff(dataPathInConst, gridForDataImport)
+        elif docmExtn==".xlsx" or docmExtn==".xls":
+            dataImpt = readData(dataPathInConst, "xlsx")
+        elif docmExtn==".csv":
+            dataImpt = readData(dataPathInConst, "csv")
+        else:
+            showerror(title=("Import error"), message=("Please import a valid .tif, .xlsx, .xls or .csv data"))
+        datafileFolder = os.path.join(settings.BASE_DIR,"static/data")
+        if not os.path.isdir(datafileFolder):
+            os.makedirs(datafileFolder)
+        dataDestination = os.path.join(settings.BASE_DIR,"static/data"+ ConstraintNumberInConst + ".csv")
+        if os.path.isfile(dataDestination):
+            os.remove(dataDestination)
+        pd.DataFrame(dataImpt).to_csv(dataDestination, header=None, index=None)
+        checkImportShapeFiles()
+        #----------------------------------endd progress------------------------------------------------
+    except Exception as err:
+        traceback.print_exc()
+
+
+
+def importShp(shpPth, fileFormat):
+    try:
+        shpPth = filedialog.askopenfilename(title="Import a " + fileFormat + " file", 
+                                              filetypes=[(fileFormat + " files", "*." + fileFormat)])
+        shpPth = r"{}".format(shpPth)
+        if shpPth:
+            def real_start():
+                shapefileFolder = os.path.join(settings.BASE_DIR,'static/data/shapefiles')
+                if not os.path.isdir(shapefileFolder):
+                    os.makedirs(shapefileFolder)
+                shpDestination = os.path.join(settings.BASE_DIR, 'static/data/shapefiles/map.'+fileFormat)
+                if os.path.isfile(shpDestination):
+                    os.remove(shpDestination)
+                shutil.copyfile(shpPth, shpDestination)
+                checkImportShapeFiles()
+            threading.Thread(target=real_start).start() 
+        else:
+            print("No shape file path provided")
+    except Exception as err:
+        traceback.print_exc()
+
+
+def checkImportShapeFiles():
+    try:
+        checkShape = os.path.join(settings.BASE_DIR, 'static/data/shapefiles/map.')
+        if os.path.isfile(checkShape + "shp"):
+            # areamenu.entryconfig(0,label="shp file") # Shape files
+            pass
+        else:
+            # areamenu.entryconfig(0,label="shp file *") # Shape files
+            pass
+        if os.path.isfile(checkShape + "dbf"):
+            # areamenu.entryconfig(1,label="dbf file") # Shape files
+            pass
+        else:
+            # areamenu.entryconfig(1,label="dbf file *") # Shape files
+            pass
+        if os.path.isfile(checkShape + "shx"):
+            # areamenu.entryconfig(2,label="shx file") # Shape files
+            pass
+        else:
+            # areamenu.entryconfig(2,label="shx file *") # Shape files
+            pass
+        if (os.path.isfile(checkShape + "shp")) and (os.path.isfile(checkShape + "dbf")) and (os.path.isfile(checkShape + "shx")):
+            # menubar.entryconfig(2,label="Shape files") # Shape files
+            pass
+        else:
+            # menubar.entryconfig(2,label="Shape files *") # Shape files
+            pass
+    except Exception as err:
+        traceback.print_exc()
 
 
 def run_model(constraints:list[Constraint], duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0]):
     def stoprunn():
-        # currentSimlStepStrg.set("----")
-        # totlSimStepStrg.set("----")
-        # global containergrph
-        # containergrph.destroy()
-        # theeLabl.destroy()
-        # containergrph = tk.LabelFrame(container3,bg="#F5F5F5", bd=0, width=500, height=400)
-        
-        
-        
         fig = Figure(figsize=(4.9,4), dpi=300)
         a = fig.add_subplot(111)
         a.set_title("Dispersal")
         a.set_xlabel("Longitude")
         a.set_ylabel("Latitude")
-        
-        
-        
-        #a.plot([1,2,3,4,5,6,7,8,9,10], [1,2,3,4,5,6,7,8,9,10])
-        
-        # plotPart = FigureCanvasTkAgg(fig, master = containergrph)
-        
-        # plotPart.draw()
-        # containergrph.place(x = pox3, y =poy3 + dif3)
-        # plotPart.get_tk_widget().place(x = 0, y =0)
     
     def runnStat():
         try:
@@ -266,22 +338,7 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
             # theeLabl = tk.Label(container3, width=400, height=400)
             timeStepSimuCode = duration
             mnth = MONTHS.index(start_month)
-            year = start_year
-            # currentSimlStepStrg.set("----")
-            # totlSimStepStrg.set(timeStepSimuCode)
-            # currentTimeYearStrg.set(year)
-            # currentTimeMonStrg.set(months[mnth])
-            #--------------------------------------data-----------------------------------------------
-            # const1Ul = float(const1UpLimtStrg.get())
-            # const1Lo = float(const1LoLimtStrg.get())
-            # const2Ul = float(const2UpLimtStrg.get())
-            # const2Lo = float(const2LoLimtStrg.get())
-            # const3Ul = float(const3UpLimtStrg.get())
-            # const3Lo = float(const3LoLimtStrg.get())
-            # const4Ul = float(const4UpLimtStrg.get())
-            # const4Lo = float(const4LoLimtStrg.get())
-            
-            
+            year = start_year            
             #--------------------------------import start---------------------------------------------
             geoPandaDataFrame = gpd.read_file(os.path.join(settings.BASE_DIR, "static/data/shapefiles/map.shp")).set_crs(epsg=4326)
             points = gpd.GeoSeries([Point(-73.5, 40.5), Point(-74.5, 40.5)], crs=4326)
@@ -297,7 +354,7 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                 constraintData = np.zeros(codeUseGridData.shape[0])
                 constraintFile = item.file.path
                 print(constraintFile)
-                if os.path.isfile(constraintFile):
+                if os.path.isfile(constraintFile) and constraintFile.endswith(".csv"):
                     constraintData = pd.read_csv(constraintFile,encoding='latin-1', on_bad_lines='skip', header = None).to_numpy()[:,0]
                 else:
                     const1Ul = 1
@@ -318,8 +375,6 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
             
             statut[idOfSiteInfected] = 2
             #--------------------------------------data-----------------------------------------------
-                
-            # apWindow.update_idletasks()
                 
             for timeStep in range(timeStepSimuCode):
                 if stopstat == 1:
@@ -349,8 +404,7 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                         break
                     idMax = int(IdVoisin[p])
                     statut[idMax] = 1
-                    if statut[idMax]!=2 :
-                        # and (Constraint1Data[idMax]>const1Lo and Constraint1Data[idMax]<=const1Ul) and (Constraint2Data[idMax]>const2Lo and Constraint2Data[idMax]<=const2Ul) and (Constraint3Data[idMax]>const3Lo and Constraint3Data[idMax]<=const3Ul) and (Constraint4Data[idMax]>const4Lo and Constraint4Data[idMax]<=const4Ul)):
+                    if statut[idMax]!=2 and test_constraints(constraints, constraintDatas, idMax):
                         statut[idMax]=2
                     
                 if stopstat == 1:
@@ -367,7 +421,9 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                 if not os.path.isdir(csvvfileFolder):
                     os.makedirs(csvvfileFolder)
                 
-                tifffileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/tif")
+                # tifffileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/png")
+
+                tifffileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/png")
                 
                 if not os.path.isdir(tifffileFolder):
                     os.makedirs(tifffileFolder)
@@ -422,7 +478,6 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                             "Infected":"#7B0059",
                             "Initial":"red"}
                 
-                
                 for ctype, dataH in gdf.groupby("plotdata"):
                     color = colrData[ctype]
                     if color != "blue":
@@ -436,18 +491,10 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                 
                 ax.legend(loc="lower left", prop={"size":6})
                 dataH.plot(color=color, ax=ax, label=ctype)
-                
-    #            gdf.plot(ax=ax, column="plotdata",legend=True, categorical=True, cmap="jet")
-                            
-                            
-                            
                 geoPandaDataFrame.plot(ax=ax, color="None", edgecolor="black")
                 ax.add_artist(ScaleBar(dx = distance_meters, location="lower center", box_alpha=0.4, ))
     
                 plt.savefig(tiffDestination)
-                
-                
-                
                 
                 # ax = None
                 # global theeImag
@@ -460,22 +507,15 @@ def run_model(constraints:list[Constraint], duration=10, start_month='Jan', star
                 # currentSimlStepStrg.set(timeStep + 1)
                 # theeLabl = tk.Label(containergrph,bg="#F5F5F5", image=theeImag, width=500, height=400)
                 # theeLabl.place(x = 0, y =0)
-                
                 # apWindow.update_idletasks()
-                    
-                    
                 if stopstat == 1:
                     stoprunn()
-                    # showinfo(title=("Stop"), message=("Run stopped"))
                     break
                 #--------------------------------------plot-----------------------------------------------
             if stopstat != 1:
                 return
-                # showinfo(title=("Success"), message=("Run complete"))
-#            gdal.Grid(tiffDestination, csvvDestination, zfield="data", algorithm = "nearest:radius1=0.3:radius2=0.3:nodata=-9999")   
-#            enddProgress("indeterminate")   
+                # showinfo(title=("Success"), message=("Run complete"))   
         except Exception as err:
-            # showerror(title=("Fatal error"), message=(err))
             traceback.print_exc()
     threading.Thread(target=runnStat).start()
 

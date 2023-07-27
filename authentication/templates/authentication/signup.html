@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Register{% endblock page_title %}
+
+{% block content %}
+<div class="connect-bg5" style="min-height:88vh";>
+  <div class="container m-auto p-5">
+    <div class="bg-light col-md-6 col-sm-12 m-auto mt-4 border rounded p-4" style="opacity:0.9">
+      {% if registered %}
+      <h1>Thank you for registering!</h1>
+        {% else %}
+          <h1>Register Here</h1>
+          {% comment %} <h3>Just fill out the form.</h3> {% endcomment %}
+          <form enctype="multipart/form-data" method="POST" action="{% url 'authentication:register' %}">
+            {% csrf_token %}
+            {{ user_form | crispy}}
+            {{ profile_form | crispy}}
+            <input type="submit" class="btn btn-outline-success mt-4" name="" value="Register">
+          </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

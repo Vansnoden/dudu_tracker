@@ -3,7 +3,7 @@
 
 {% block page_title %}Home{% endblock page_title %}
 
-{% block main_content %}
+{% block content %}
 <div class="loader">
 </div>
 
@@ -147,7 +147,7 @@
                     </div>
                     <div class="form-inline d-flex justify-content-between align-items-center mt-3">
                         <label for="duration" class="">Duration</label>
-                        <input type="number" placeholder="0" id="duration"/>
+                        <input type="number" placeholder="1" name="duration" id="duration"/>
                     </div>
                 </div>
             </fieldset>
@@ -196,6 +196,6 @@
         </div>
     </div>
 </form>
-{% endblock main_content %}
+{% endblock content %}
 
 

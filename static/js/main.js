@@ -47,11 +47,11 @@ $(document).ready(function(){
                 let item = userdata.constraints[i];
                 let constraint_code = "<div class='form-inline'><div class='m-2'>\
                         <label for='c"+i+"max'>Constraint "+i+" upper limit</label><br/>\
-                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"'/>\
+                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"' step='any'/>\
                     </div>\
                     <div class='m-2'>\
                         <label for='c"+i+"min'>Constraint "+i+" lower limit</label><br/>\
-                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"'/>\
+                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"' step='any'/>\
                     </div></form>";
                 all_c_code += constraint_code;
             }
@@ -72,7 +72,7 @@ $(document).ready(function(){
                 userdata.constraints[i].maximum = max;
             }
             localStorage.setItem("userdata", JSON.stringify(userdata));
-            $("#constrains").hide(400);
+            // $("#constrains").hide(400);
             // console.log(userdata);
         }
     })
@@ -164,7 +164,7 @@ $(document).ready(function(){
                 }
             });
         }
-        let nIntervId = setInterval(update, 1000);
+        let nIntervId = setInterval(update, 500);
         $("#btn-stop").click(()=>{
             clearInterval(nIntervId);
         })
