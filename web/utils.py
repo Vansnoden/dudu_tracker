@@ -1,15 +1,15 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-from tkinter import ttk, filedialog
-from tkinter.messagebox import showerror
-from tkinter.messagebox import showinfo
+# from tkinter import ttk, filedialog
+# from tkinter.messagebox import showerror
+# from tkinter.messagebox import showinfo
 import threading
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib
 from matplotlib import pyplot as plt
 from shapely.geometry import Point
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# matplotlib.use("TkAgg")
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import geopandas as gpd
 import rasterio as rio
@@ -182,7 +182,7 @@ def produce_neighbourhood(spedStrg=4):
     threading.Thread(target=real_negh).start()
 
 
-def test_constraints(constraints:list[Constraint], cdatalist, idMax) -> bool:
+def test_constraints(constraints:list, cdatalist, idMax) -> bool:
     res = True
     for i in list(range(0, len(constraints))):
         if cdatalist[i][idMax] <= float(constraints[i].maximum) and cdatalist[i][idMax] > float(constraints[i].minimum):
@@ -321,7 +321,7 @@ def checkImportShapeFiles():
         traceback.print_exc()
 
 
-def run_model(constraints:list[Constraint], duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0]):
+def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0]):
     def stoprunn():
         fig = Figure(figsize=(4.9,4), dpi=300)
         a = fig.add_subplot(111)
