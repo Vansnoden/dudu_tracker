@@ -24,8 +24,11 @@ legend.scheduler-border {
 
 #map { 
     height: 94vh;
+    /* width: auto; */
     /* width: 90vw; */
-    margin: auto; 
+    margin: auto!important; 
+    /* overflow: hidden; */
+    background-color: white;
 }
 
 .panel-1{
@@ -106,7 +109,7 @@ legend.scheduler-border {
 .flotable{
     border: 1px solid gray;
     border-radius: 20px;
-    background: #f5f5f5;
+    background: #cecece;
     padding: 0.5em;
     width: fit-content;
     width: -moz-fit-content;
@@ -117,6 +120,9 @@ legend.scheduler-border {
     scrollbar-width: none;  /* Firefox */
     overflow: scroll;
     z-index: 9500!important;
+    /* box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75); */
 }
 
 .flotable::-webkit-scrollbar {
@@ -157,6 +163,9 @@ legend.scheduler-border {
     transform: translate(-50%, -50%);
     top: 95vh;
     z-index: 9100;
+    box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
+    -webkit-box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
+    -moz-box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
 }
 
 @media screen and (max-width:720px) {
@@ -169,4 +178,8 @@ legend.scheduler-border {
 .logo{
     height: 50px;
     width: auto;
+}
+
+.mr-2{
+    margin-right: 1em!important;
 }

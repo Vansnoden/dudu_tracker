@@ -45,14 +45,14 @@ $(document).ready(function(){
         if(userdata.constraints.length > 0){
             for(let i=0; i<userdata.constraints.length; i++){
                 let item = userdata.constraints[i];
-                let constraint_code = "<div class='mt-2'>\
+                let constraint_code = "<div class='form-inline'><div class='m-2'>\
                         <label for='c"+i+"max'>Constraint "+i+" upper limit</label><br/>\
                         <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"'/>\
                     </div>\
-                    <div class='mt-2'>\
+                    <div class='m-2'>\
                         <label for='c"+i+"min'>Constraint "+i+" lower limit</label><br/>\
                         <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"'/>\
-                    </div>";
+                    </div></form>";
                 all_c_code += constraint_code;
             }
             $("#constraints_conf").html(all_c_code);
@@ -111,7 +111,7 @@ $(document).ready(function(){
         for (let i=0; i<num_cons; i++){
             let constraint_code = "<div class='mt-2'>\
                 <label for='c1'>Constraint "+i+"</label><br/>\
-                <input type='file' id='c"+i+"' name='c"+i+"' accept='.tif' required/>\
+                <input type='file' id='c"+i+"' name='c"+i+"' accept='.csv' required/>\
             </div>";
             all_c_code += constraint_code;
         }
@@ -139,6 +139,36 @@ $(document).ready(function(){
             console.log(err.message);
         }
     });
+
+    $("#play").click(() => {
+        const update = () => {
+            let index = 0;
+            let num_call = 1;
+            index = parseInt($("#index").val());
+            num_call = parseInt($("#num_call").val());
+            $.ajax({
+                type: "POST",
+                url: 'get_result/'+ index,
+                data: {},
+                dataType: "json",
+                success: function (data) {
+                    // any process in data
+                    // console.log("****");
+                    $("#num_call").attr("value", data.num_call);
+                    $("#index").attr("value", data.next);
+                    $("#output_img").attr("src", "data:image/png;base64,"+data.file);
+                    // console.log(data);
+                },
+                failure: function () {
+                    console.log("failure");
+                }
+            });
+        }
+        let nIntervId = setInterval(update, 1000);
+        $("#btn-stop").click(()=>{
+            clearInterval(nIntervId);
+        })
+    })
 
     $("#save_configs").click((ev) => {
         userdata.project_folder = document.getElementById("pfolder").files[0].mozFullPath;
@@ -183,10 +213,10 @@ $(document).ready(function(){
     //     });
     // })
 
-    var map = L.map('map').setView([51.505, -0.09], 13);
+    // var map = L.map('map').setView([51.505, -0.09], 13);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    // }).addTo(map);
 
 })

@@ -9,6 +9,8 @@
 
 <form id="config-form" action="/process_form/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" id="index" value="0"/>
+    <input type="hidden" id="num_call" value="1"/>
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-center" id="all-buttons">
         <div class="btn-single d-flex flex-row justify-content-center align-items-center" id="config-show">
             <span class="fa fa-cog"></span>
@@ -20,22 +22,29 @@
         <div class="action-btns">
             <div class="d-flex" style="gap:1em">
                 <button class="btn btn-success" type="submit" id="btn-run" title="run">
-                    <span class="fa fa-play"></span>
+                    <span class="fa fa-play mr-2"></span><span class="">Run Model</span>
                 </button>
-                <a class="btn btn-warning" id="btn-pause" title="pause">
-                    <span class="fa fa-pause"></span>
+            </div>
+        </div>
+        <div class="action-btns">
+            <div class="d-flex" style="gap:1em">
+                <a class="btn btn-success" type="submit" id="play" title="play">
+                    <span class="fa fa-play mr-2"></span><span>Live<span>
                 </a>
-                <a class="btn btn-danger" id="btn-stop" title="stop">
-                    <span class="fa fa-stop"></span>
+                {% comment %} <a class="btn btn-warning" id="btn-pause" title="pause">
+                    <span class="fa fa-pause"></span>
+                </a> {% endcomment %}
+                <a class="btn btn-warning" id="btn-stop" title="stop">
+                    <span class="fa fa-pause mr-2"></span><span>Pause<span>
                 </a>
             </div>
         </div>
-        <div class="status-sim">
+        {% comment %} <div class="status-sim">
             <span class="mr-3">Simulation: </span>
             <span id="sim_num">----</span>
             <span class="mr-3">Out of: </span>
             <span id="sim_total">----</span>
-        </div>
+        </div> {% endcomment %}
         <div class="btn-single bg-primary text-white" id="period-show">
             <span class="fa fa-clock-o"></span>
             <span class="m-3">Configure Period</span>
@@ -74,15 +83,15 @@
                     <label for="num_con">Number of constraints *</label><br/>
                     <input type="number" id="num_cons" name="num_cons" required/>
                 </div>
+                <div id="constraint_fields"></div>
                 <div class="mt-3">
-                    <label for="cell_size">Cell size (km) *</label><br/>
+                    <label for="cell_size">Cell size *</label><br/>
                     <input type="number" id="cell_size" name="cell_size" required/>
                 </div>
                 <div class="mt-3">
-                    <label for="travel_speed">Travel speed (km/time step) *</label><br/>
+                    <label for="travel_speed">Travel Speed () *</label><br/>
                     <input type="number" id="travel_speed" name="travel_speed" required/>
                 </div>
-                <div id="constraint_fields"></div>
                 <hr/>
                 <div class="mt-3">
                     <label for="affected_area">Starting affected area *</label><br/>
@@ -182,7 +191,9 @@
 
     </div>
     <div class="container-fluid m-auto p-0 m-0">
-        <div id="map"></div>
+        <div id="map" class="m-auto d-flex flex-row align-items-center justify-content-center" style="padding:4em">
+            <img src="{% static 'data/outputs/png/Spread1.png' %}" id="output_img" style="height:100%"/>
+        </div>
     </div>
 </form>
 {% endblock main_content %}
