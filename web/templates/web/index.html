@@ -7,175 +7,184 @@
 <div class="loader">
 </div>
 
-<div class="d-flex flex-row justify-content-between align-items-center" id="all-buttons">
-    <div class="btn-single d-flex flex-row justify-content-center align-items-center" id="config-show">
-        <span class="fa fa-cog"></span>
-    </div>
-    <div class="btn-single" id="constraint-show">
-        <span class="fa fa-eye"></span>
-        <span class="m-3">Configure constraints</span>
-    </div>
-    <div class="action-btns">
-        <div class="d-flex" style="gap:1em">
-            <button class="btn btn-success" id="btn-run" title="run">
-                <span class="fa fa-play"></span>
-            </button>
-            <button class="btn btn-warning" id="btn-pause" title="pause">
-                <span class="fa fa-pause"></span>
-            </button>
-            <button class="btn btn-danger" id="btn-stop" title="stop">
-                <span class="fa fa-stop"></span>
-            </button>
+<form id="config-form" action="/process_form/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center" id="all-buttons">
+        <div class="btn-single d-flex flex-row justify-content-center align-items-center" id="config-show">
+            <span class="fa fa-cog"></span>
+        </div>
+        <div class="btn-single" id="constraint-show">
+            <span class="fa fa-eye"></span>
+            <span class="m-3">Configure constraints</span>
+        </div>
+        <div class="action-btns">
+            <div class="d-flex" style="gap:1em">
+                <button class="btn btn-success" type="submit" id="btn-run" title="run">
+                    <span class="fa fa-play"></span>
+                </button>
+                <a class="btn btn-warning" id="btn-pause" title="pause">
+                    <span class="fa fa-pause"></span>
+                </a>
+                <a class="btn btn-danger" id="btn-stop" title="stop">
+                    <span class="fa fa-stop"></span>
+                </a>
+            </div>
+        </div>
+        <div class="status-sim">
+            <span class="mr-3">Simulation: </span>
+            <span id="sim_num">----</span>
+            <span class="mr-3">Out of: </span>
+            <span id="sim_total">----</span>
+        </div>
+        <div class="btn-single bg-primary text-white" id="period-show">
+            <span class="fa fa-clock-o"></span>
+            <span class="m-3">Configure Period</span>
+        </div>
+        <div class="btn-single bg-warning" id="calibration-show">
+            <span class="fa fa-cog"></span>
+            <span class="m-3">Calibrate</span>
         </div>
     </div>
-    <div class="status-sim">
-        <span class="mr-3">Simulation: </span>
-        <span id="sim_num">----</span>
-        <span class="mr-3">Out of: </span>
-        <span id="sim_total">----</span>
-    </div>
-    <div class="btn-single bg-primary text-white" id="period-show">
-        <span class="fa fa-clock-o"></span>
-        <span class="m-3">Configure Period</span>
-    </div>
-    <div class="btn-single bg-warning" id="calibration-show">
-        <span class="fa fa-cog"></span>
-        <span class="m-3">Calibrate</span>
-    </div>
-</div>
 
-<div id="disposable">
-    <div class="flotable" id="config">
-        <span class="fa fa-close" style="float:right" id="config-hide"></span>
-        <div class="p-2">
-            <form id="config-form">
+    <div id="disposable">
+        <div class="flotable" id="config">
+            <span class="fa fa-close" style="float:right" id="config-hide"></span>
+            <div class="p-2">
                 <h5>Main Configurations panel</h5>
                 <hr/>
                 <div class="">
-                    <label for="pfolder">Project folder</label><br/>
-                    <input type="file" id="pfolder" name="pfolder" required/>
+                    <label for="pfolder">Project folder *</label><br/>
+                    <input type="file" id="pfolder" name="pfolder" required webkitdirectory/>
                 </div>
                 <div class="mt-3">
-                    <label for="shp_file">Shape file (shp)</label><br/>
-                    <input type="file" id="shp_file" name="shp_file" required/>
+                    <label for="shp_file">Shape file (shp) *</label><br/>
+                    <input type="file" id="shp_file" name="shp_file" accept=".shp" required/>
                 </div>
                 <div class="mt-3">
-                    <label for="dbf_file">Shape file (dbf)</label><br/>
-                    <input type="file" id="dbf_file" name="dbf_file" required/>
+                    <label for="dbf_file">Shape file (dbf) *</label><br/>
+                    <input type="file" id="dbf_file" name="dbf_file" accept=".dbf" required/>
                 </div>
                 <div class="mt-3">
-                    <label for="shx_file">Shape file (shx)</label><br/>
-                    <input type="file" id="shx_file" name="shx_file" required/>
+                    <label for="shx_file">Shape file (shx) *</label><br/>
+                    <input type="file" id="shx_file" name="shx_file" accept=".shx" required/>
                 </div>
                 <h6>Constraints</h6>
                 <hr/>
                 <div class="mt-3">
-                    <label for="num_con">Number of constraints</label><br/>
+                    <label for="num_con">Number of constraints *</label><br/>
                     <input type="number" id="num_cons" name="num_cons" required/>
+                </div>
+                <div class="mt-3">
+                    <label for="cell_size">Cell size (km) *</label><br/>
+                    <input type="number" id="cell_size" name="cell_size" required/>
+                </div>
+                <div class="mt-3">
+                    <label for="travel_speed">Travel speed (km/time step) *</label><br/>
+                    <input type="number" id="travel_speed" name="travel_speed" required/>
                 </div>
                 <div id="constraint_fields"></div>
                 <hr/>
                 <div class="mt-3">
-                    <label for="affected_area">Starting affected area</label><br/>
-                    <input type="file" id="affected_area" name="affected_area" required/>
+                    <label for="affected_area">Starting affected area *</label><br/>
+                    <input type="file" id="affected_area" name="affected_area" accept=".csv"required/>
                 </div>
                 <hr/>
                 <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
-                    <button class="btn btn-success" id="save_configs">Save configurations</button>
-                </div>
-            </form>        
+                    <a class="btn btn-success" id="save_configs">Save configurations</a>
+                </div>       
+            </div>
         </div>
-    </div>
-    <div class="flotable" id="constrains">
-        <span class="fa fa-close" style="float:right" id="constraint-dispose"></span>
-        <div class="p-2">
-            <fieldset class="border p-2">
+        <div class="flotable" id="constrains">
+            <span class="fa fa-close" style="float:right" id="constraint-dispose"></span>
+            <div class="p-2">
+                <fieldset class="border p-2">
+                    <legend class="float-none w-auto p-2">
+                        Contraints configuration
+                    </legend>
+                    <div id="constraints_conf"></div>
+                    <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
+                        <a class="btn btn-success" id="save_const">Update constraints</a>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="flotable" id="period">
+            <span class="fa fa-close" style="float:right" id="period-hide"></span>
+            <fieldset class="border p-2 hg-50">
                 <legend class="float-none w-auto p-2">
-                    Contraints configuration
+                    Starting period
                 </legend>
-                <div id="constraints_conf"></div>
-                <div class="mt-3 d-flex flex-row justify-content-center align-items-center">
-                    <button class="btn btn-success" id="save_const">Update constraints</button>
+                <div>
+                    <div class="form-inline form-group d-flex justify-content-between align-items-center">
+                        <label for="month" class="mr-2">Months</label>
+                        <select id="month" name="month">
+                            {% for month in months %}
+                            <option value="{{month}}">{{month}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-inline d-flex justify-content-between align-items-center mt-4">
+                        <label for="year">Year</label>
+                        <input type="number" id="year" name="year"/>
+                    </div>
+                    <div class="form-inline d-flex justify-content-between align-items-center mt-4">
+                        <label for="">Time step</label>
+                        <select id="tstep" name="tstep">
+                            {% for step in tsteps %}
+                            <option value="{{step}}">{{step}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                        <label for="duration" class="">Duration</label>
+                        <input type="number" placeholder="0" id="duration"/>
+                    </div>
                 </div>
             </fieldset>
         </div>
-    </div>
 
-    <div class="flotable" id="period">
-        <span class="fa fa-close" style="float:right" id="period-hide"></span>
-        <fieldset class="border p-2 hg-50">
-            <legend class="float-none w-auto p-2">
-                Starting period
-            </legend>
-            <div>
-                <div class="form-inline form-group d-flex justify-content-between align-items-center">
-                    <label for="month" class="mr-2">Months</label>
-                    <select id="month" name="month">
+        <div class="flotable" id="calibration">
+            <span class="fa fa-close" style="float:right" id="calibration-hide"></span>
+            <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">
+                    Calibrate
+                </legend>
+                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                    <label for="lat">Lat</label>
+                    <input type="number" id="lat" name="lat"/>
+                </div>
+                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                    <label for="lon">Lon</label>
+                    <input type="number" id="lon"/>
+                </div>
+                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                    <label for="month2">Month</label>
+                    <select id="month2" name="month2">
                         {% for month in months %}
                         <option value="{{month}}">{{month}}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-inline d-flex justify-content-between align-items-center mt-4">
+                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
                     <label for="year">Year</label>
-                    <input type="number" id="year" name="year"/>
-                </div>
-                <div class="form-inline d-flex justify-content-between align-items-center mt-4">
-                    <label for="">Time step</label>
-                    <select id="tstep" name="tstep">
-                        {% for step in tsteps %}
-                        <option value="{{step}}">{{step}}</option>
-                        {% endfor %}
-                    </select>
+                    <input type="number" id="year"/>
                 </div>
                 <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                    <label for="duration" class="">Duration</label>
-                    <input type="number" placeholder="0" id="duration"/>
+                    <label for="diff">Diff = </label>
+                    <input type="text" placeholder="-----" id="diff" name="diff" disabled="true"/>
                 </div>
-            </div>
-        </fieldset>
-    </div>
+                <div class="form-inline d-flex justify-content-between align-items-center mt-3">
+                    <a class="btn btn-success" id="btn-calibrate">Calibrate</a>
+                </div>  
+            </fieldset>            
+        </div>
 
-    <div class="flotable" id="calibration">
-        <span class="fa fa-close" style="float:right" id="calibration-hide"></span>
-        <fieldset class="border p-2">
-            <legend class="float-none w-auto p-2">
-                Calibrate
-            </legend>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <label for="lat">Lat</label>
-                <input type="number" id="lat" name="lat"/>
-            </div>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <label for="lon">Lon</label>
-                <input type="number" id="lon"/>
-            </div>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <label for="month2">Month</label>
-                <select id="month2" name="month2">
-                    {% for month in months %}
-                    <option value="{{month}}">{{month}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <label for="year">Year</label>
-                <input type="number" id="year"/>
-            </div>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <label for="diff">Diff = </label>
-                <input type="text" placeholder="-----" id="diff" name="diff" disabled="true"/>
-            </div>
-            <div class="form-inline d-flex justify-content-between align-items-center mt-3">
-                <button class="btn btn-success" id="btn-calibrate">Calibrate</button>
-            </div>  
-        </fieldset>            
     </div>
-
-</div>
-<div class="container-fluid m-auto p-0 m-0">
-    <div id="map"></div>
-</div>
+    <div class="container-fluid m-auto p-0 m-0">
+        <div id="map"></div>
+    </div>
+</form>
 {% endblock main_content %}
 
 

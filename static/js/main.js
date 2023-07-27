@@ -1,3 +1,21 @@
+async function postData(url = "", data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    return response.json(); // parses JSON response into native JavaScript objects
+}
+
 $(document).ready(function(){
 
     var userdata = {
@@ -9,6 +27,8 @@ $(document).ready(function(){
         "constraints": [],
         "affected_area": "",
     };
+
+    var configForm = null;
 
     localStorage.setItem("userdata", JSON.stringify(userdata));
 
@@ -27,11 +47,11 @@ $(document).ready(function(){
                 let item = userdata.constraints[i];
                 let constraint_code = "<div class='mt-2'>\
                         <label for='c"+i+"max'>Constraint "+i+" upper limit</label><br/>\
-                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximun+"'/>\
+                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"'/>\
                     </div>\
                     <div class='mt-2'>\
                         <label for='c"+i+"min'>Constraint "+i+" lower limit</label><br/>\
-                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimun+"'/>\
+                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"'/>\
                     </div>";
                 all_c_code += constraint_code;
             }
@@ -48,11 +68,12 @@ $(document).ready(function(){
             for(let i=0; i<userdata.constraints.length; i++){
                 let max = parseFloat($("#c"+i+"max").val());
                 let min = parseFloat($("#c"+i+"min").val());
-                userdata.constraints[i].minimun = min;
-                userdata.constraints[i].maximun = max;
+                userdata.constraints[i].minimum = min;
+                userdata.constraints[i].maximum = max;
             }
             localStorage.setItem("userdata", JSON.stringify(userdata));
             $("#constrains").hide(400);
+            // console.log(userdata);
         }
     })
 
@@ -90,34 +111,77 @@ $(document).ready(function(){
         for (let i=0; i<num_cons; i++){
             let constraint_code = "<div class='mt-2'>\
                 <label for='c1'>Constraint "+i+"</label><br/>\
-                <input type='file' id='c"+i+"' name='c"+i+"'/>\
+                <input type='file' id='c"+i+"' name='c"+i+"' accept='.tif' required/>\
             </div>";
             all_c_code += constraint_code;
         }
         $("#constraint_fields").html(all_c_code);
     });
 
-    $("#config-form").submit(function(e){
-        return false;
+    $("#config-form").submit(async function(e){
+        e.preventDefault();
+        configForm = document.querySelector("form");
+        alert("ok");
+        // handle submit;
+        let formData = new FormData(configForm);
+        console.log(formData);
+        try {
+            const res = await fetch(
+                '/process_form/',
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            );
+            const resData = await res.json();
+            console.log(resData);
+        } catch (err) {
+            console.log(err.message);
+        }
     });
 
     $("#save_configs").click((ev) => {
-        userdata.project_folder = $("#pfolder").val();
-        userdata.shp_file = $("#shp_file").val();
-        userdata.dbf_file = $("#dbf_file").val();
-        userdata.shx_file = $("#shx_file").val();
+        userdata.project_folder = document.getElementById("pfolder").files[0].mozFullPath;
+        userdata.shp_file = document.getElementById("shp_file").files[0].mozFullPath;
+        userdata.dbf_file = document.getElementById("dbf_file").files[0].mozFullPath;
+        userdata.shx_file = document.getElementById("shx_file").files[0].mozFullPath;
         let num_con = parseInt($("#num_cons").val());
+        userdata.constraints = [];
         for(let i=0; i<num_con; i++){
             userdata.constraints.push({
-                "file_path": $("#c"+i+"").val(),
-                "minimun": 0,
-                "maximun": 0,
+                "file_path": document.getElementById("c"+i+"").files[0].mozFullPath,
+                "minimum": 0,
+                "maximum": 0,
             })
         }
-        userdata.affected_area = $("#affected_area").val();
+        userdata.affected_area = document.getElementById("affected_area").files[0].mozFullPath;
         localStorage.setItem("userdata", JSON.stringify(userdata));
+        console.log(userdata);
         $("#config").hide(400);
-    })
+    });
+
+    // $("#btn-run").click((ev) => {
+    //     let userdata_ = JSON.parse(localStorage.getItem("userdata"));
+    //     let data = {
+    //         "data":userdata_
+    //     }
+    //     postData("/process/", data);
+    //     $.ajax({
+    //         type: "POST",
+    //         url: '/process/',
+    //         data: {
+    //             "data": JSON.stringify(userdata_)
+    //         },
+    //         dataType: "json",
+    //         success: function (data) {
+    //             // any process in data
+    //             alert("successfull")
+    //         },
+    //         failure: function () {
+    //             alert("failure");
+    //         }
+    //     });
+    // })
 
     var map = L.map('map').setView([51.505, -0.09], 13);
 

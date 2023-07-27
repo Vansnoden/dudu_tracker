@@ -5,4 +5,5 @@ from .views import *
 
 urlpatterns = [
     path('', home, name="home"),
+    path('process_form/', process_data_form, name="process_form")
 ]
