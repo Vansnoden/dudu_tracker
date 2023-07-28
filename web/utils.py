@@ -517,7 +517,9 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 # showinfo(title=("Success"), message=("Run complete"))   
         except Exception as err:
             traceback.print_exc()
-    threading.Thread(target=runnStat).start()
+    thread = threading.Thread(target=runnStat)
+    thread.start()
+    return thread
 
 
 

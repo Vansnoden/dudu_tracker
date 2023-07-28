@@ -74,11 +74,12 @@ def get_outputs(request, index=0):
 
 @csrf_exempt
 def process_data_form(request):
+    # print(request.POST)
     data_dir = os.path.join(settings.BASE_DIR, "static/data/outputs/png") 
     csv_dir = os.path.join(settings.BASE_DIR, "static/data/outputs/csv") 
-    if os.path.isfile(data_dir):
+    if os.path.exists(data_dir):
         shutil.rmtree(data_dir)
-    if os.path.isfile(csv_dir):
+    if os.path.exists(csv_dir):
         shutil.rmtree(csv_dir)
     data = {
         "project_folder": "",
@@ -120,7 +121,8 @@ def process_data_form(request):
     
     produce_grid()
     produce_neighbourhood()
-    run_model(constraints, duration=duration, start_month=start_month, start_year=start_year, time_step=time_step)
+    thread = run_model(constraints, duration=duration, start_month=start_month, start_year=start_year, time_step=time_step)
+    thread.join()
     
     return JsonResponse({
         "success": "ok",

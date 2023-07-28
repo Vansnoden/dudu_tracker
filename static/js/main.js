@@ -47,11 +47,11 @@ $(document).ready(function(){
                 let item = userdata.constraints[i];
                 let constraint_code = "<div class='form-inline'><div class='m-2'>\
                         <label for='c"+i+"max'>Constraint "+i+" upper limit</label><br/>\
-                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"' step='any'/>\
+                        <input type='number' id='c"+i+"max' name='c"+i+"max' value='"+item.maximum+"' step='any' required/>\
                     </div>\
                     <div class='m-2'>\
                         <label for='c"+i+"min'>Constraint "+i+" lower limit</label><br/>\
-                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"' step='any'/>\
+                        <input type='number' id='c"+i+"min' name='c"+i+"min' value='"+item.minimum+"' step='any' required/>\
                     </div></form>";
                 all_c_code += constraint_code;
             }
@@ -72,7 +72,7 @@ $(document).ready(function(){
                 userdata.constraints[i].maximum = max;
             }
             localStorage.setItem("userdata", JSON.stringify(userdata));
-            // $("#constrains").hide(400);
+            $("#constrains").hide(400);
             // console.log(userdata);
         }
     })
@@ -120,11 +120,10 @@ $(document).ready(function(){
 
     $("#config-form").submit(async function(e){
         e.preventDefault();
+        $("#loading").removeClass("d-none");
         configForm = document.querySelector("form");
-        alert("ok");
         // handle submit;
         let formData = new FormData(configForm);
-        console.log(formData);
         try {
             const res = await fetch(
                 '/process_form/',
@@ -133,8 +132,10 @@ $(document).ready(function(){
                     body: formData,
                 },
             );
-            const resData = await res.json();
-            console.log(resData);
+            let resData = await res.json().then(()=>{
+                $("#loading").addClass("d-none");
+                console.log("DONE");
+            })
         } catch (err) {
             console.log(err.message);
         }
@@ -171,7 +172,7 @@ $(document).ready(function(){
     })
 
     $("#save_configs").click((ev) => {
-        userdata.project_folder = document.getElementById("pfolder").files[0].mozFullPath;
+        // userdata.project_folder = document.getElementById("pfolder").files[0].mozFullPath;
         userdata.shp_file = document.getElementById("shp_file").files[0].mozFullPath;
         userdata.dbf_file = document.getElementById("dbf_file").files[0].mozFullPath;
         userdata.shx_file = document.getElementById("shx_file").files[0].mozFullPath;
