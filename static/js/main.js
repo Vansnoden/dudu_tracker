@@ -34,9 +34,9 @@ $(document).ready(function(){
 
     // to be hidden
     $("#constrains").hide();
-    $("#period").hide();
-    $("#calibration").hide();
-    $("#config").hide();
+    // $("#period").hide();
+    // $("#calibration").hide();
+    // $("#config").hide();
 
     // constraint management
     $("#constraint-show").click((ev) => {
