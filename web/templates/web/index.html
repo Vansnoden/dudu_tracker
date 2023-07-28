@@ -7,7 +7,7 @@
 <div id="loading" class="loader d-flex flex-column justify-content-center align-items-center d-none">
     <img src="{% static 'img/refs/bee_loader.gif' %}"/>
     <p>
-        Please wait few while the program is running ...
+        Please wait while the program is running ...
     </p>
 </div>
 
@@ -22,6 +22,10 @@
         <div class="btn-single" id="constraint-show">
             <span class="fa fa-eye"></span>
             <span class="m-3">Configure constraints</span>
+        </div>
+        <div class="btn-single bg-primary text-white" id="period-show">
+            <span class="fa fa-clock-o"></span>
+            <span class="m-3">Configure Period</span>
         </div>
         <div class="action-btns">
             <div class="d-flex" style="gap:1em">
@@ -49,10 +53,6 @@
             <span class="mr-3">Out of: </span>
             <span id="sim_total">----</span>
         </div> {% endcomment %}
-        <div class="btn-single bg-primary text-white" id="period-show">
-            <span class="fa fa-clock-o"></span>
-            <span class="m-3">Configure Period</span>
-        </div>
         <div class="btn-single bg-warning" id="calibration-show">
             <span class="fa fa-cog"></span>
             <span class="m-3">Calibrate</span>
