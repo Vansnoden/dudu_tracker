@@ -362,10 +362,14 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 print(constraintFile)
                 if os.path.isfile(constraintFile) and constraintFile.endswith(".csv"):
                     constraintData = pd.read_csv(constraintFile,encoding='latin-1', on_bad_lines='skip', header = None).to_numpy()[:,0]
-                # elif os.path.isfile(constraintFile) and constraintFile.endswith(".tif"):
-                #     img = Image.open(constraintFile)
-                #     imageMat = np.asarray(img)
-                #     constraintData = imageMat.reshape(imageMat.shape[0],-1)
+                elif os.path.isfile(constraintFile) and constraintFile.endswith(".tif"):
+                    gridForDataImportDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+                    gridForDataImport = pd.read_csv(gridForDataImportDestination)
+                    # if docmExtn==".tif":
+                    constraintData = readTiff(constraintFile, gridForDataImport)
+                    # img = Image.open(constraintFile)
+                    # imageMat = np.asarray(img)
+                    # constraintData = imageMat.reshape(imageMat.shape[0],-1)
                 else:
                     const1Ul = 1
                     const1Lo = -1
