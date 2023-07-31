@@ -111,7 +111,7 @@ $(document).ready(function(){
         for (let i=0; i<num_cons; i++){
             let constraint_code = "<div class='mt-2'>\
                 <label for='c1'>Constraint "+i+"</label><br/>\
-                <input type='file' id='c"+i+"' name='c"+i+"' accept='.csv' required/>\
+                <input type='file' id='c"+i+"' name='c"+i+"' accept='.csv,.tif' required/>\
             </div>";
             all_c_code += constraint_code;
         }

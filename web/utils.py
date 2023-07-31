@@ -15,6 +15,7 @@ import geopandas as gpd
 import rasterio as rio
 import numpy as np
 import pandas as pd
+# from osgeo import gdal
 import shutil
 import os
 import shapefile as shp
@@ -235,7 +236,7 @@ def readTiff(filePath, tiffFrme):
         areaData[areaData<0] = 0
         return areaData
     except Exception as err:
-        showerror(title=("Fatal error"), message=(err))
+        traceback.print_exc()
 
 
 
@@ -321,6 +322,11 @@ def checkImportShapeFiles():
         traceback.print_exc()
 
 
+# def tif_do_df(tifpath):
+#     ds = gdal.Open("dem.tif")
+
+
+
 def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0]):
     def stoprunn():
         fig = Figure(figsize=(4.9,4), dpi=300)
@@ -356,6 +362,10 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 print(constraintFile)
                 if os.path.isfile(constraintFile) and constraintFile.endswith(".csv"):
                     constraintData = pd.read_csv(constraintFile,encoding='latin-1', on_bad_lines='skip', header = None).to_numpy()[:,0]
+                # elif os.path.isfile(constraintFile) and constraintFile.endswith(".tif"):
+                #     img = Image.open(constraintFile)
+                #     imageMat = np.asarray(img)
+                #     constraintData = imageMat.reshape(imageMat.shape[0],-1)
                 else:
                     const1Ul = 1
                     const1Lo = -1
