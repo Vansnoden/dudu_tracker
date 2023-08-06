@@ -21,8 +21,9 @@ import os
 import shapefile as shp
 import math
 from django.conf import settings
-from .models import Constraint, UserData
+from .models import Constraint, Request, Workspace
 import traceback
+from pathlib import Path
 
 MONTHS = [
     "Jan","Feb","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
@@ -51,7 +52,8 @@ def distance(originInDs, npdfInDs):
         d = radius * c
         return d
     except Exception as err:
-        print(err)
+        # print(err)
+        traceback.print_exc()
 
 
 def neighbourHoodForrDisp(neighbourHoodFileData, listIdRgExpose, listIdRgInfect):
@@ -66,21 +68,24 @@ def neighbourHoodForrDisp(neighbourHoodFileData, listIdRgExpose, listIdRgInfect)
         Idx =  np.setdiff1d(voisinage, listIdRgInfect)
         return Idx 
     except Exception as err:
-        showerror(title=("Fatal error"), message=(err))
+        traceback.print_exc()
+        # showerror(title=("Fatal error"), message=(err))
 
 
 # functions
-def produce_grid(cellsize=4):
+def produce_grid(workspace:Workspace=None, udata:Request=None, cellsize=4):
     def real_start():
         # try:
         #----------------------------------stat progress------------------------------------------------
         # showProgress("indeterminate", "Producing grid")
         #--------------------------------import start---------------------------------------
-        shapefileLocation = os.path.join(settings.BASE_DIR, "static/data/shapefiles/map.shp")
+        # shapefileLocation = os.path.join(shapefileParent, "static/data/shapefiles/map.shp")
+        shapefileLocation = udata.shp_file.path
         sf = shp.Reader(shapefileLocation)
         minx,miny,maxx,maxy = sf.bbox
         sf = None
         # cellsize = int(cellSizegridStrg.get())
+        print(f"#####=====>{type(cellsize)}")
         if cellsize<=0:
             raise Exception("Cell size cannot be zero or less than zero")
         cellsizeInDegrees = cellsize*0.00833
@@ -88,7 +93,9 @@ def produce_grid(cellsize=4):
         dy = cellsizeInDegrees
         nx = int(math.ceil(abs(maxx - minx)/dx))
         ny = int(math.ceil(abs(maxy - miny)/dy))
-        gridshapefileLocation = os.path.join(settings.BASE_DIR, "static/data/gridFiles/grid")
+        # gridshapefileLocation = os.path.join(settings.BASE_DIR, "static/data/gridFiles/grid")
+        gridshapefileLocation = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/gridFiles/grid")
+        print(f"####>>> {gridshapefileLocation}")
         w = shp.Writer(gridshapefileLocation)
         w.autoBalance = 1
         w.field("ID")
@@ -116,10 +123,12 @@ def produce_grid(cellsize=4):
         points_clipFrme["latitude"]=points_clip.y
         points_clipFrme["longitude"]=points_clip.x
         points_clip = None
-        gridfileFolder = os.path.join(settings.BASE_DIR, "static/data")
+        # gridfileFolder = os.path.join(settings.BASE_DIR, "static/data")
+        gridfileFolder = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/")
         if not os.path.isdir(gridfileFolder):
             os.makedirs(gridfileFolder)
-        gridDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+        # gridDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+        gridDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/grid.csv")
         if os.path.isfile(gridDestination):
             os.remove(gridDestination)
         points_clipFrme[["latitude", "longitude"]].to_csv(gridDestination, index=False)
@@ -130,17 +139,20 @@ def produce_grid(cellsize=4):
         # enddProgress("indeterminate")
         # showerror(title=("Fatal error"), message=(err))
         #--------------------------------thread start-------------------------------------------
-    threading.Thread(target=real_start).start()
+    thread = threading.Thread(target=real_start)
+    thread.start()
+    return thread
 
 
 
-def produce_neighbourhood(spedStrg=4):
+def produce_neighbourhood(workspace:Workspace=None, udata:Request=None, spedStrg=4):
     def real_negh():
         try:
             #----------------------------------stat progress------------------------------------------------
             # showProgress("determinate", "Producing neigbourhood")
             travelDist = spedStrg
-            gridDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+            # gridDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+            gridDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/grid.csv")
             if os.path.isfile(gridDestination):
                 npNe = pd.read_csv(gridDestination, encoding="latin-1", on_bad_lines='skip').to_numpy()
             else:
@@ -166,7 +178,8 @@ def produce_neighbourhood(spedStrg=4):
                 # barrvalu.set(settValu) 
                 # apWindow.update_idletasks()
             npNe = None
-            neghDestination = os.path.join(settings.BASE_DIR, "static/data/neigbourhood.csv")
+            # neghDestination = os.path.join(settings.BASE_DIR, "static/data/neigbourhood.csv")
+            neghDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/neigbourhood.csv")
             if os.path.isfile(neghDestination):
                 os.remove(neghDestination)
             pd.DataFrame(neigbourFile).to_csv(neghDestination, header=None, index=None)
@@ -180,7 +193,9 @@ def produce_neighbourhood(spedStrg=4):
         #     enddProgress("determinate")
         #     showerror(title=("Fatal error"), message=(err))
     #--------------------------------thread start-------------------------------------------
-    threading.Thread(target=real_negh).start()
+    thread = threading.Thread(target=real_negh)
+    thread.start()
+    return thread
 
 
 def test_constraints(constraints:list, cdatalist, idMax) -> bool:
@@ -216,8 +231,8 @@ def importConstraint(dataPath, ConstraintNumber):
             def real_start():
                 importConstraintThreadStat(dataPath, ConstraintNumber)
             threading.Thread(target=real_start).start()
-        else:
-            showerror(title=("Import error"), message=("Please import " + ConstraintNumber + " data"))
+        # else:
+        #     showerror(title=("Import error"), message=("Please import " + ConstraintNumber + " data"))
     except Exception as err:
         traceback.print_exc()
 
@@ -253,8 +268,8 @@ def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
             dataImpt = readData(dataPathInConst, "xlsx")
         elif docmExtn==".csv":
             dataImpt = readData(dataPathInConst, "csv")
-        else:
-            showerror(title=("Import error"), message=("Please import a valid .tif, .xlsx, .xls or .csv data"))
+        # else:
+        #     showerror(title=("Import error"), message=("Please import a valid .tif, .xlsx, .xls or .csv data"))
         datafileFolder = os.path.join(settings.BASE_DIR,"static/data")
         if not os.path.isdir(datafileFolder):
             os.makedirs(datafileFolder)
@@ -276,7 +291,7 @@ def importShp(shpPth, fileFormat):
         shpPth = r"{}".format(shpPth)
         if shpPth:
             def real_start():
-                shapefileFolder = os.path.join(settings.BASE_DIR,'static/data/shapefiles')
+                shapefileFolder = os.path.join(settings.BASE_DIR,f'static/data/shapefiles')
                 if not os.path.isdir(shapefileFolder):
                     os.makedirs(shapefileFolder)
                 shpDestination = os.path.join(settings.BASE_DIR, 'static/data/shapefiles/map.'+fileFormat)
@@ -327,7 +342,7 @@ def checkImportShapeFiles():
 
 
 
-def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0]):
+def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020, time_step=TSTEPS[0], workspace=None, udata=None):
     def stoprunn():
         fig = Figure(figsize=(4.9,4), dpi=300)
         a = fig.add_subplot(111)
@@ -346,13 +361,15 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
             mnth = MONTHS.index(start_month)
             year = start_year            
             #--------------------------------import start---------------------------------------------
-            geoPandaDataFrame = gpd.read_file(os.path.join(settings.BASE_DIR, "static/data/shapefiles/map.shp")).set_crs(epsg=4326)
+            # geoPandaDataFrame = gpd.read_file(os.path.join(settings.BASE_DIR, f"static/data/shapefiles/map.shp")).set_crs(epsg=4326)
+            geoPandaDataFrame = gpd.read_file(udata.shp_file.path).set_crs(epsg=4326)
             points = gpd.GeoSeries([Point(-73.5, 40.5), Point(-74.5, 40.5)], crs=4326)
             points = points.to_crs(32619)
             distance_meters = points[0].distance(points[1])
             
-            codeUseGridData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/grid.csv"), encoding='latin-1', on_bad_lines='skip').to_numpy()
-
+            # codeUseGridData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/grid.csv"), encoding='latin-1', on_bad_lines='skip').to_numpy()
+            codeUseGridData = pd.read_csv(os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/grid.csv"), encoding='latin-1', on_bad_lines='skip').to_numpy()
+            # codeUseGridData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/grid.csv"), encoding='latin-1', on_bad_lines='skip').to_numpy()
             constraintDatas = []
             constraintFiles = []
 
@@ -363,7 +380,8 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 if os.path.isfile(constraintFile) and constraintFile.endswith(".csv"):
                     constraintData = pd.read_csv(constraintFile,encoding='latin-1', on_bad_lines='skip', header = None).to_numpy()[:,0]
                 elif os.path.isfile(constraintFile) and constraintFile.endswith(".tif"):
-                    gridForDataImportDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+                    # gridForDataImportDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
+                    gridForDataImportDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/grid.csv")
                     gridForDataImport = pd.read_csv(gridForDataImportDestination)
                     # if docmExtn==".tif":
                     constraintData = readTiff(constraintFile, gridForDataImport)
@@ -376,9 +394,10 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 constraintDatas.append(constraintData)
                 constraintFiles.append(constraintFile)
             
-            neighbourData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/neigbourhood.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)
-            
-            initialId = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/Starting.csv"),encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)[:,0]
+            neighbourData = pd.read_csv(os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/neigbourhood.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)
+            # neighbourData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/neigbourhood.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)
+            initialId = pd.read_csv(udata.affected_area.path, encoding='latin-1', on_bad_lines='skip', skiprows=[0],header = None).to_numpy().astype(int)[:,0]
+            # initialId = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/Starting.csv"),encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)[:,0]
             #--------------------------------import end-----------------------------------------
 
             initialData = np.concatenate((codeUseGridData[initialId,:], np.ones(initialId.shape[0]).reshape(initialId.shape[0],1)*-1), axis=1)
@@ -429,21 +448,23 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 idOfSiteExposed = np.where(statut==1)[0]
                 idOfSiteInfected = np.where(statut==2)[0]
                 #--------------------------------------plot-----------------------------------------------
-            
-                csvvfileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/csv")
+                csvvfileFolder = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/outputs/csv")
+                # csvvfileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/csv")
                 
                 if not os.path.isdir(csvvfileFolder):
                     os.makedirs(csvvfileFolder)
                 
                 # tifffileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/png")
 
-                tifffileFolder = os.path.join(settings.BASE_DIR, "static/data/outputs/png")
+                tifffileFolder = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/outputs/png")
                 
                 if not os.path.isdir(tifffileFolder):
                     os.makedirs(tifffileFolder)
                 
-                csvvDestination = os.path.join(settings.BASE_DIR, "static/data/outputs/csv/Dispersal"+ str(timeStep+1) + ".csv")
-                tiffDestination = os.path.join(settings.BASE_DIR, "static/data/outputs/png/Spread" + str(timeStep+1) + ".png")
+                csvvDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/outputs/csv/Dispersal{str(timeStep+1)}.csv")
+                tiffDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/outputs/png/Spread{str(timeStep+1)}.png")
+                # csvvDestination = os.path.join(settings.BASE_DIR, "static/data/outputs/csv/Dispersal"+ str(timeStep+1) + ".csv")
+                # tiffDestination = os.path.join(settings.BASE_DIR, "static/data/outputs/png/Spread" + str(timeStep+1) + ".png")
                 
                 if os.path.isfile(csvvDestination):
                     os.remove(csvvDestination)

@@ -65,7 +65,7 @@ legend.scheduler-border {
 }
 
 .dropdown-menu{
-    z-index: 12000!important;
+    z-index: 6!important;
 }
 
 #all-buttons{
@@ -75,7 +75,7 @@ legend.scheduler-border {
     padding-top: 5px;
     padding-left: 3.5em;
     padding-right: 3.5em;
-    z-index: 9000;
+    z-index: 4;
 }
 
 .action-btns{
@@ -99,7 +99,7 @@ legend.scheduler-border {
     background: #fff;
     padding: 1em;
     border: 1px solid gray;
-    z-index: 9000;
+    z-index: 4;
 }
 
 .btn-single:hover{
@@ -119,7 +119,7 @@ legend.scheduler-border {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     overflow: scroll;
-    z-index: 9500!important;
+    z-index: 4!important;
     /* box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75);
     -webkit-box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 10px 10px 49px 0px rgba(0,0,0,0.75); */
@@ -162,7 +162,7 @@ legend.scheduler-border {
     left: 50%;
     transform: translate(-50%, -50%);
     top: 95vh;
-    z-index: 9100;
+    z-index: 4;
     box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
     -webkit-box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
     -moz-box-shadow: -1px -4px 5px 2px rgba(0,0,0,0.38);
@@ -190,7 +190,7 @@ legend.scheduler-border {
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 15000;
+    z-index: 6;
     top:0;
     .img{
         height: 10vh;

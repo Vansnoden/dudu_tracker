@@ -141,12 +141,38 @@ $(document).ready(function(){
         }
     });
 
+
+    $("#download-form").submit(async function(e){
+        e.preventDefault();
+        let downloadForm = document.querySelector("#download-form");
+        // handle submit;
+        console.log(downloadForm);
+        let formData = new FormData(downloadForm);
+        try {
+            const res = await fetch(
+                '/download_data/',
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            );
+            let resData = await res.json();
+            window.location.href
+            window.open(resData.file, "_blank");
+        } catch (err) {
+            console.log(err.message);
+        }
+    });
+
+
     $("#play").click(() => {
         const update = () => {
             let index = 0;
             let num_call = 1;
+            let req_id = 1
             index = parseInt($("#index").val());
             num_call = parseInt($("#num_call").val());
+            req_id = parseInt($("#req_id").val());
             $.ajax({
                 type: "POST",
                 url: 'get_result/'+ index,
@@ -155,7 +181,8 @@ $(document).ready(function(){
                 success: function (data) {
                     // any process in data
                     // console.log("****");
-                    $("#num_call").attr("value", data.num_call);
+                    $("#num_call").attr("value", data.num_outputs);
+                    $("#req_id").attr("value", data.req_id);
                     $("#index").attr("value", data.next);
                     $("#output_img").attr("src", "data:image/png;base64,"+data.file);
                     // console.log(data);
