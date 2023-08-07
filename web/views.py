@@ -27,6 +27,10 @@ def home(request):
     })
 
 
+def help(request):
+   return render(request, "web/help.html", {}) 
+
+
 def sort_output_names(datalist):
     num_list = [(int(re.search(r'\d+', os.path.basename(x)).group()), datalist.index(x))  for x in datalist]
     sorted_data = []

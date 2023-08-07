@@ -1,3 +1,7 @@
+html{
+    scroll-behavior: smooth!important;
+}
+
 .main-content{
     min-height: 94vh;
     padding: 1px;

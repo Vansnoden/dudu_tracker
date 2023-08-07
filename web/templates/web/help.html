@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Home{% endblock page_title %}
+
+{% block content %}
+<div class="container m-auto bg-light shadow">
+    <div class="row">
+        <div class="colborder p-2" style="height:85vh;overflow-y:scroll">
+            <h2>
+                DuduTracker
+            </h2>
+            <p>
+                A Software to Simulate and Understand Insect Movements over time and space
+            </p>
+            <img src="{% static 'img/imh.jpg'%}" class="img-fluid"/>
+            <div class="row mt-3 py-2 rounded border">
+                <div class="col">
+                    <ol class="row">
+                        <div class="col-md-6 col-xs-12 py-2 px-4">
+                            <li>
+                                <b>Configuration button and panel</b>: here is were you load your shapefiles (.shp, .shx, .dbf)
+                                to the system. You also define the number of constraints to be consider and uploads required
+                                files for each constraints. In addition, you also load the file containing the initial location
+                                of your insects, and finally you save those configuration to the system.
+                            </li>
+                            <li>
+                                <b>Constraints configuration button</b>: onclick, this opens a panel where you can provide 
+                                upper and lower limit values of each constraint loaded in the previous step.
+                            </li>
+                            <li>
+                                <b>Simulation period configuration button</b>: onclick, this opens a panel (7) where you can provide 
+                                time setting for the simulation; namely the starting month, the starting year, the timestep, and the
+                                duration of the simulation.
+                            </li>
+                            <li>
+                                <b>Run button</b>: onclick, this runs the model after checking all required inputs have been provided.
+                            </li>
+                        </div>
+
+                        <div class="col-md-6 col-xs-12 py-2 px-4">
+                            <li>
+                                <b>Actions panel</b>: this panel allows you respectively to, visualize the simulation, pause the visualization
+                                or download model outputs. If any of this action is activated without running the model, the user gets the
+                                results of his latest run.
+                            </li>
+                            <li>
+                                <b>Calibration button</b>: onclick this button toggles the calibration panel (8), where you can define any further
+                                configuration for you simmulation.
+                            </li>
+                            <li>
+                                <b>Period configuration panel</b>.
+                            </li>
+                            <li>
+                                <b>Calibration panel</b>.
+                            </li>
+                            <li>
+                                <b>Visualization panel</b>: this is where the model outputs are displayed.
+                            </li>
+                        </div>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
