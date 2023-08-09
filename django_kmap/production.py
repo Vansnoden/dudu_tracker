@@ -12,7 +12,7 @@ config = {
 
 DEBUG = False
 ALLOWED_HOSTS = [config['WEB_DOMAIN']]
-CSRF_TRUSTED_ORIGINS=["https://dudutracker.monadeware.com/", "dudutracker.monadeware.com/"]
+CSRF_TRUSTED_ORIGINS=["https://dudutracker.monadeware.com", "dudutracker.monadeware.com"]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
