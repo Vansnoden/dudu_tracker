@@ -396,7 +396,10 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
             
             neighbourData = pd.read_csv(os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/neigbourhood.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)
             # neighbourData = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/neigbourhood.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)
-            initialId = pd.read_csv(udata.affected_area.path, encoding='latin-1', on_bad_lines='skip', skiprows=[0],header = None).to_numpy().astype(int)[:,0]
+            importAffectedArea(udata)
+            initialId = pd.read_csv(os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/Starting.csv"), encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)[:,0]
+            # initialId = pd.read_csv(udata.affected_area.path, encoding='latin-1', on_bad_lines='skip', skiprows=[0],header = None).to_numpy().astype(int)[:,0]
+            # print(f"###### {initialId}")
             # initialId = pd.read_csv(os.path.join(settings.BASE_DIR, "static/data/Starting.csv"),encoding='latin-1', on_bad_lines='skip', header = None).to_numpy().astype(int)[:,0]
             #--------------------------------import end-----------------------------------------
 
@@ -558,3 +561,24 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
 
 
 
+def importAffectedArea(udata:Request):
+    """convert user's imported data to usable format in csv (Starging.csv) 
+    within his workspace as initial points"""
+    filepath = udata.affected_area.path
+    gridForDataImport = pd.read_csv(os.path.join(settings.MEDIA_ROOT, f"workspaces/{udata.workspace.id}/data/{udata.req_uid}/grid.csv")).to_numpy()
+    if str(filepath).endswith(".xlsx") or str(filepath).endswith(".xls"):
+        dataImpt = readData(filepath, "xlsx")
+    elif str(filepath).endswith(".csv"):
+        dataImpt = readData(filepath, "csv")
+    coloData = np.array([])
+    for countrow in range(dataImpt.shape[0]):    
+        origin = dataImpt[countrow]
+        rangeDistance = distance(origin, gridForDataImport)
+        coloData = np.union1d(coloData, np.where(rangeDistance==np.min(rangeDistance))[0][0])
+    datafileFolder = os.path.join(settings.MEDIA_ROOT, f"workspaces/{udata.workspace.id}/data/{udata.req_uid}")
+    if not os.path.isdir(datafileFolder):
+        os.makedirs(datafileFolder)
+    dataDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{udata.workspace.id}/data/{udata.req_uid}/Starting.csv")
+    if os.path.isfile(dataDestination):
+        os.remove(dataDestination)
+    pd.DataFrame(coloData).to_csv(dataDestination, header=None, index=None)

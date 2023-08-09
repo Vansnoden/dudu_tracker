@@ -719,7 +719,7 @@ def runnButtonOnPres():
             
             initialId = pd.read_csv(r"{}".format(pathname+"/resources/data/Starting.csv"), header = None).to_numpy().astype(int)[:,0]
             #--------------------------------import end-----------------------------------------
-
+            print(f"###### {initialId}")
             initialData = np.concatenate((codeUseGridData[initialId,:], np.ones(initialId.shape[0]).reshape(initialId.shape[0],1)*-1), axis=1)
             idOfSiteInfected = initialId
             idOfSiteExposed = idOfSiteInfected
