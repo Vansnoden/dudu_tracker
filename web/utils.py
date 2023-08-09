@@ -1,15 +1,10 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-# from tkinter import ttk, filedialog
-# from tkinter.messagebox import showerror
-# from tkinter.messagebox import showinfo
 import threading
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib
 from matplotlib import pyplot as plt
 from shapely.geometry import Point
-# matplotlib.use("TkAgg")
-# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import geopandas as gpd
 import rasterio as rio
@@ -69,23 +64,15 @@ def neighbourHoodForrDisp(neighbourHoodFileData, listIdRgExpose, listIdRgInfect)
         return Idx 
     except Exception as err:
         traceback.print_exc()
-        # showerror(title=("Fatal error"), message=(err))
 
 
 # functions
 def produce_grid(workspace:Workspace=None, udata:Request=None, cellsize=4):
     def real_start():
-        # try:
-        #----------------------------------stat progress------------------------------------------------
-        # showProgress("indeterminate", "Producing grid")
-        #--------------------------------import start---------------------------------------
-        # shapefileLocation = os.path.join(shapefileParent, "static/data/shapefiles/map.shp")
         shapefileLocation = udata.shp_file.path
         sf = shp.Reader(shapefileLocation)
         minx,miny,maxx,maxy = sf.bbox
         sf = None
-        # cellsize = int(cellSizegridStrg.get())
-        print(f"#####=====>{type(cellsize)}")
         if cellsize<=0:
             raise Exception("Cell size cannot be zero or less than zero")
         cellsizeInDegrees = cellsize*0.00833
@@ -93,9 +80,7 @@ def produce_grid(workspace:Workspace=None, udata:Request=None, cellsize=4):
         dy = cellsizeInDegrees
         nx = int(math.ceil(abs(maxx - minx)/dx))
         ny = int(math.ceil(abs(maxy - miny)/dy))
-        # gridshapefileLocation = os.path.join(settings.BASE_DIR, "static/data/gridFiles/grid")
         gridshapefileLocation = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/gridFiles/grid")
-        print(f"####>>> {gridshapefileLocation}")
         w = shp.Writer(gridshapefileLocation)
         w.autoBalance = 1
         w.field("ID")
@@ -123,22 +108,14 @@ def produce_grid(workspace:Workspace=None, udata:Request=None, cellsize=4):
         points_clipFrme["latitude"]=points_clip.y
         points_clipFrme["longitude"]=points_clip.x
         points_clip = None
-        # gridfileFolder = os.path.join(settings.BASE_DIR, "static/data")
         gridfileFolder = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/")
         if not os.path.isdir(gridfileFolder):
             os.makedirs(gridfileFolder)
-        # gridDestination = os.path.join(settings.BASE_DIR, "static/data/grid.csv")
         gridDestination = os.path.join(settings.MEDIA_ROOT, f"workspaces/{workspace.id}/data/{udata.req_uid}/grid.csv")
         if os.path.isfile(gridDestination):
             os.remove(gridDestination)
         points_clipFrme[["latitude", "longitude"]].to_csv(gridDestination, index=False)
         points_clipFrme = None  
-        # enddProgress("indeterminate")
-        #----------------------------------endd progress------------------------------------------------ 
-        # except Exception as err:  
-        # enddProgress("indeterminate")
-        # showerror(title=("Fatal error"), message=(err))
-        #--------------------------------thread start-------------------------------------------
     thread = threading.Thread(target=real_start)
     thread.start()
     return thread

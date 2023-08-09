@@ -131,7 +131,7 @@ def download_data(request):
 
 @csrf_exempt
 def process_data_form(request):
-    # print(request.POST)
+    print("### REQUEST SUBMITTED ###")
     workspace = request.user.get_user_workspace()
     udata = Request(
         workspace = workspace,
@@ -163,12 +163,14 @@ def process_data_form(request):
     
     thread1 = produce_grid(workspace, udata, cellsize=udata.cell_size)
     thread1.join()
+    print("#### GRID PRODUCED ####")
     thread2 = produce_neighbourhood(workspace, udata, spedStrg=udata.cell_size)
     thread2.join()
+    print("#### NEIGHBOURHOOD PRODUCED ####")
     thread3 = run_model(constraints, duration=duration, start_month=start_month, 
                        start_year=start_year, time_step=time_step, workspace=workspace, udata=udata)
     thread3.join()
-    
+    print("#### MODEL RUN COMPLETED PRODUCED ####")
     return JsonResponse({
         "success": "ok",
     })
