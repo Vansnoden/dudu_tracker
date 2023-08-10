@@ -142,6 +142,11 @@ $(document).ready(function(){
     });
 
 
+    $("#time-show").click(()=>{
+        $("#period").hide(400);
+    });
+
+
     $("#download-form").submit(async function(e){
         e.preventDefault();
         let downloadForm = document.querySelector("#download-form");

@@ -10,9 +10,9 @@
             <h2>
                 DuduTracker
             </h2>
-            <div class="d-flex flex-row justify-content-between align-items-center p-3">
-                <div>
-                    <p>
+            <div class="row d-flex flex-row justify-content-between align-items-center p-3">
+                <div class="col-9">
+                    <p style="text-align:justify;">
                         A Software to Simulate and Understand Insect Movements over time and space. Dudutracker, is
                         designed to simulate and comprehend insect movements over time and space, uses the principles 
                         of cellular automata. In the insect-related context, the cells can be in three potential 
@@ -26,9 +26,11 @@
                         If the screen display looks off, press <b> CTRL -</b> to make it smaller or <b>CTRL +</b> to make it larger.
                     </div>
                 </div>
-                <a target="_blank" class="btn btn-primary" href="https://drive.google.com/file/d/1kiu8EZ_FNICDcNGsekw7qqpToiK2vZzb/view?usp=sharing">
-                    Download demo data
-                </a>
+                <div class="col-3 d-flex flex-row justify-content-end align-items-center p-3">
+                    <a target="_blank" class="btn btn-primary" href="https://drive.google.com/file/d/1kiu8EZ_FNICDcNGsekw7qqpToiK2vZzb/view?usp=sharing">
+                        Download demo data
+                    </a>
+                </div>
             </div>
             <img src="{% static 'img/dudutrack-mh.png'%}" class="img-fluid"/>
             <div class="row mt-3 py-2 rounded border">
