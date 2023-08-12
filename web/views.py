@@ -160,6 +160,8 @@ def process_data_form(request):
     start_year = int(request.POST["year"]) if "year" in request.POST.keys() else 2020
     start_month = request.POST["month"] if "month" in request.POST.keys() else "Jan"
     time_step = request.POST["tstep"] if "tstep" in request.POST.keys() else "Yearly"
+
+    print(f"# TIMESTEP: {time_step}")
     
     thread1 = produce_grid(workspace, udata, cellsize=udata.cell_size)
     thread1.join()

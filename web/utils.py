@@ -388,6 +388,19 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
             
             statut[idOfSiteInfected] = 2
             #--------------------------------------data-----------------------------------------------
+            # AllSteps = []
+            # if time_step == "Monthly":
+            #     mnth += 1
+            #     if mnth>=12:
+            #         mnth = 0
+            #         year += 1
+            #         # currentTimeYearStrg.set(year)
+            #     # currentTimeMonStrg.set(months[mnth])
+            # else:
+            #     year += 1
+            #     # currentTimeYearStrg.set(year)
+
+            print(f"### TIME-STEP-SIMUCODE: {timeStepSimuCode}")
                 
             for timeStep in range(timeStepSimuCode):
                 if stopstat == 1:
@@ -486,7 +499,7 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 ax.set_xlabel("Longitude")
                 ax.set_ylabel("Latitude")
                 # ax.set_title("Dispersal "+currentTimeMonStrg.get()+" "+currentTimeYearStrg.get())
-                ax.set_title(f"Dispersal: {start_month} {start_year + timeStep}")
+                ax.set_title(f"Dispersal: {MONTHS[mnth]} {year}")
                 
                 colrData = {"Unexposed":"blue",
                             "Exposed":"yellow",
