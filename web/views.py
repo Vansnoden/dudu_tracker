@@ -62,9 +62,9 @@ def get_outputs(request, index=0):
         if request_data:
             data_dir = os.path.join(settings.MEDIA_ROOT, f"workspaces/{request_data.workspace.id}/data/{request_data.req_uid}/outputs/png")
             # file_names = os.listdir(data_dir)
-            filelist = glob.glob(os.path.join(data_dir, 'Spread*.png'))
-            filelist = sorted(filelist)
-            filelist = sort_output_names(filelist)
+            # filelist = glob.glob(os.path.join(data_dir, 'Spread*.png'))
+            filelist = sorted(Path(data_dir).iterdir(), key=os.path.getmtime)
+            # filelist = sort_output_names(filelist)
             try:
                 # file_names = file_names.sort()
                 count = len(filelist)
