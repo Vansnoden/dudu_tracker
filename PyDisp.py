@@ -1072,6 +1072,9 @@ def readProjectFolderLocation():
         showerror(title=("Fatal error"), message=(err))
 
 
+
+# building UI interface
+
 apWindow = tk.Tk()
 buttonWidth = 28
 
@@ -1080,34 +1083,17 @@ apWindow.geometry("1200x600+100+40")
 # apWindow.iconbitmap(r"C:\Users\peter\Downloads\facebook_cover_photo_1.ico")
 apWindow.configure(background="#F5F5F5")
 
-
 # variables
 onColr = "#28BE28"
 ofColr = "#28BE28"
 bgColr = "#F5F5F5"
 
-months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 timeSteps = ("Monthly", "Yearly")
-
-
-statusFl = {"shp": 0, "dbf": 0, "shx": 0, "bio1": 0,
-            "bio2": 0, "abio1": 0, "abio2": 0, "start": 0, "valid": 0}
+statusFl = {"shp": 0, "dbf": 0, "shx": 0, "bio1": 0, "bio2": 0, "abio1": 0, "abio2": 0, "start": 0, "valid": 0}
 stopstat = 0
-
-#@adess
-constNumberStrg = tk.StringVar();
-
-const1UpLimtStrg = tk.StringVar()
-const1LoLimtStrg = tk.StringVar()
-const2UpLimtStrg = tk.StringVar()
-const2LoLimtStrg = tk.StringVar()
-const3UpLimtStrg = tk.StringVar()
-const3LoLimtStrg = tk.StringVar()
-const4UpLimtStrg = tk.StringVar()
-const4LoLimtStrg = tk.StringVar()
-
-
+num_constraints = 5
+constNumberStrg = tk.StringVar()
 spedStrg = tk.StringVar()
 cellSizegridStrg = tk.StringVar()
 timeStrg = tk.StringVar()
@@ -1120,25 +1106,12 @@ currentSimlStepStrg = tk.StringVar()
 totlSimStepStrg = tk.StringVar()
 mseeStrg = tk.StringVar()
 
-
 latdStrg = tk.StringVar()
 longStrg = tk.StringVar()
 enddTimeMontStrg = tk.StringVar()
 enddTimeYearStrg = tk.StringVar()
 
-
 constNumberStrg.set("0.0")
-
-const1UpLimtStrg.set("0.0")
-const1LoLimtStrg.set("0.0")
-const2UpLimtStrg.set("0.0")
-const2LoLimtStrg.set("0.0")
-const3UpLimtStrg.set("0.0")
-const3LoLimtStrg.set("0.0")
-const4UpLimtStrg.set("0.0")
-const4LoLimtStrg.set("0.0")
-
-
 spedStrg.set("0")
 cellSizegridStrg.set("0")
 timeStrg.set(timeSteps[0])
@@ -1151,37 +1124,28 @@ currentSimlStepStrg.set("----")
 totlSimStepStrg.set("----")
 mseeStrg.set("--------")
 
-
 latdStrg.set("0.0")
 longStrg.set("0.0")
 enddTimeMontStrg.set(months[0])
 enddTimeYearStrg.set("2021")
 
-
 # clen
-container1 = tk.LabelFrame(apWindow, bg="#F5F5F5",
-                           text="Data inputs", width=260, height=500)
-container2 = tk.LabelFrame(apWindow, bg="#F5F5F5",
-                           text="Starting period", width=260, height=190)
-container3 = tk.LabelFrame(apWindow, bg="#F5F5F5",
-                           text="Output", width=560, height=500)
+container1 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Data inputs", width=260, height=500)
+container2 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Starting period", width=260, height=190)
+container3 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Output", width=560, height=500)
 container4 = tk.LabelFrame(apWindow, bg="#F5F5F5", width=260, height=280)
-containergrph = tk.LabelFrame(
-    container3, bg="#F5F5F5", bd=0, width=500, height=400)
-
-
+containergrph = tk.LabelFrame(container3, bg="#F5F5F5", bd=0, width=500, height=400)
 noteBook = ttk.Notebook(container4, width=248, height=248)
 valdNote = ttk.Frame(noteBook)
 runnNote = ttk.Frame(noteBook)
+
 noteBook.add(valdNote, text="Calibration")
 noteBook.add(runnNote, text="Run")
-
 
 # menu
 menubar = tk.Menu(apWindow)
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Select project folder *",
-                     command=readProjectFolderLocation)
+filemenu.add_command(label="Select project folder *", command=readProjectFolderLocation)
 menubar.add_cascade(label="File *", menu=filemenu)
 
 areamenu = tk.Menu(menubar, tearoff=0)
@@ -1196,23 +1160,29 @@ gridmenu.add_command(label="Produce neigbourhood *", command=prodNeig)
 menubar.add_cascade(label="Grid/Neigbourhood *", menu=gridmenu)
 
 datamenu = tk.Menu(menubar, tearoff=0)
-datamenu.add_command(label="Constraint 1 *",
-                     command=lambda: importConstraint("Constraint 1"))
-datamenu.add_command(label="Constraint 2 *",
-                     command=lambda: importConstraint("Constraint 2"))
-datamenu.add_command(label="Constraint 3 *",
-                     command=lambda: importConstraint("Constraint 3"))
-datamenu.add_command(label="Constraint 4 *",
-                     command=lambda: importConstraint("Constraint 4"))
+
+constUpLimtStrg = []
+constLoLimtStrg = []
+
+for i in range(1,num_constraints + 1):
+    new_const_up_lim = tk.StringVar()
+    new_const_lo_lim = tk.StringVar()
+    new_const_up_lim.set("0.0")
+    new_const_lo_lim.set("0.0")
+    constUpLimtStrg.append(new_const_up_lim)
+    constLoLimtStrg.append(new_const_lo_lim)
+
+
+for i in list(range(1,num_constraints + 1)):
+    datamenu.add_command(label=f"Constraint {i} *", command=lambda: importConstraint(f"Constraint {i}"))
+
 menubar.add_cascade(label="Import data *", menu=datamenu)
 
 valdmenu = tk.Menu(menubar, tearoff=0)
-valdmenu.add_command(label="Starting area *",
-                     command=lambda: importAffected("Starting"))
+valdmenu.add_command(label="Starting area *", command=lambda: importAffected("Starting"))
 menubar.add_cascade(label="Affected area *", menu=valdmenu)
 
 apWindow.config(menu=menubar)
-
 
 menubar.entryconfig(0, state="normal")  # Shape files
 menubar.entryconfig(1, state="normal")  # Import data
@@ -1221,44 +1191,30 @@ menubar.entryconfig(2, state="normal")  # Affected area
 
 # labels
 
-constNumberEntryLabl = ttk.Label(
-    container1, text="Constraint number", background=bgColr)
+# constNumberEntryLabl = ttk.Label(
+#     container1, text="Constraint number", background=bgColr)
 
-const1UpLimtLabl = ttk.Label(
-    container1, text="Constraint 1 upper limit", background=bgColr)
-const1LoLimtLabl = ttk.Label(
-    container1, text="Constraint 1 lower limit", background=bgColr)
-const2UpLimtLabl = ttk.Label(
-    container1, text="Constraint 2 upper limit", background=bgColr)
-const2LoLimtLabl = ttk.Label(
-    container1, text="Constraint 2 lower limit", background=bgColr)
-const3UpLimtLabl = ttk.Label(
-    container1, text="Constraint 3 upper limit", background=bgColr)
-const3LoLimtLabl = ttk.Label(
-    container1, text="Constraint 3 lower limit", background=bgColr)
-const4UpLimtLabl = ttk.Label(
-    container1, text="Constraint 4 upper limit", background=bgColr)
-const4LoLimtLabl = ttk.Label(
-    container1, text="Constraint 4 lower limit", background=bgColr)
+constUpLimtLabels = []
+constLoLimtLabels = []
 
+for i in list(range(1, num_constraints + 1)):
+    constUpLimtLabl = ttk.Label(container1, text=f"Constraint {i} upper limit", background=bgColr)
+    constLoLimtLabl = ttk.Label(container1, text=f"Constraint {i} lower limit", background=bgColr)
+    constUpLimtLabels.append(constUpLimtLabl)
+    constLoLimtLabels.append(constLoLimtLabl)
 
-spedLabl = ttk.Label(
-    container1, text="Travel speed (km/time step)", background=bgColr)
-cellSizegridLabl = ttk.Label(
-    container1, text="Cell size (km)", background=bgColr)
+spedLabl = ttk.Label(container1, text="Travel speed (km/time step)", background=bgColr)
+cellSizegridLabl = ttk.Label(container1, text="Cell size (km)", background=bgColr)
 timeLabl = ttk.Label(container2, text="Time step", background=bgColr)
 duraLabl = ttk.Label(runnNote, text="Duration", background=bgColr)
 startTimeMonLabl = ttk.Label(container2, text="Month", background=bgColr)
 startTimeYearLabl = ttk.Label(container2, text="Year", background=bgColr)
 outOfStepLabl = ttk.Label(container3, text="out of", background=bgColr)
-currentSimlStepLabl = ttk.Label(
-    container3, textvariable=currentSimlStepStrg, background=bgColr, width=4)
-totlSimStepLabl = ttk.Label(
-    container3, textvariable=totlSimStepStrg, background=bgColr, width=4)
+currentSimlStepLabl = ttk.Label(container3, textvariable=currentSimlStepStrg, background=bgColr, width=4)
+totlSimStepLabl = ttk.Label(container3, textvariable=totlSimStepStrg, background=bgColr, width=4)
 simlValuStepLabl = ttk.Label(container3, text="Simulation", background=bgColr)
 mseeLabl = ttk.Label(valdNote, text="Diff = ", background=bgColr)
-mseeOutpValdLabl = ttk.Label(
-    valdNote, textvariable=mseeStrg, background=bgColr, width=20)
+mseeOutpValdLabl = ttk.Label(valdNote, textvariable=mseeStrg, background=bgColr, width=20)
 
 
 latdLablInVald = ttk.Label(valdNote, text="Lat", background=bgColr)
@@ -1267,61 +1223,41 @@ startTimeMonLablInVald = ttk.Label(valdNote, text="Month", background=bgColr)
 startTimeYearLablInVald = ttk.Label(valdNote, text="Year", background=bgColr)
 
 
-constNumberEntry = ttk.Entry(
-    container1, textvariable=constNumberStrg, width=10)
+# constNumberEntry = ttk.Entry(container1, textvariable=constNumberStrg, width=10)
 
+const1UpLimtEntrys = []
+const1LoLimtEntrys = []
 
 # text inputs
-const1UpLimtEntry = ttk.Entry(
-    container1, textvariable=const1UpLimtStrg, width=10)
-const1LoLimtEntry = ttk.Entry(
-    container1, textvariable=const1LoLimtStrg, width=10)
-const2UpLimtEntry = ttk.Entry(
-    container1, textvariable=const2UpLimtStrg, width=10)
-const2LoLimtEntry = ttk.Entry(
-    container1, textvariable=const2LoLimtStrg, width=10)
-const3UpLimtEntry = ttk.Entry(
-    container1, textvariable=const3UpLimtStrg, width=10)
-const3LoLimtEntry = ttk.Entry(
-    container1, textvariable=const3LoLimtStrg, width=10)
-const4UpLimtEntry = ttk.Entry(
-    container1, textvariable=const4UpLimtStrg, width=10)
-const4LoLimtEntry = ttk.Entry(
-    container1, textvariable=const4LoLimtStrg, width=10)
+for i in list(range(1, num_constraints+1)):
+    const1UpLimtEntry = ttk.Entry(container1, textvariable=constUpLimtStrg[i-1], width=10)
+    const1LoLimtEntry = ttk.Entry(container1, textvariable=constLoLimtStrg[i-1], width=10)
+    const1UpLimtEntrys.append(const1UpLimtEntry)
+    const1LoLimtEntrys.append(const1LoLimtEntry)
 
 
 spedEntry = ttk.Entry(container1, textvariable=spedStrg, width=10)
-cellSizegridEntry = ttk.Entry(
-    container1, textvariable=cellSizegridStrg, width=10)
+cellSizegridEntry = ttk.Entry(container1, textvariable=cellSizegridStrg, width=10)
 duraEntry = ttk.Entry(runnNote, textvariable=duraStrg, width=12)
-startTimeYearEntry = ttk.Entry(
-    container2, textvariable=startTimeYearStrg, width=12)
+startTimeYearEntry = ttk.Entry(container2, textvariable=startTimeYearStrg, width=12)
 
 
 latdEntry = ttk.Entry(valdNote, textvariable=latdStrg, width=14)
 longEntry = ttk.Entry(valdNote, textvariable=longStrg, width=14)
-enddTimeYearEntry = ttk.Entry(
-    valdNote, textvariable=enddTimeYearStrg, width=14)
+enddTimeYearEntry = ttk.Entry(valdNote, textvariable=enddTimeYearStrg, width=14)
 
 
 # buttons
-runnButton = ttk.Button(runnNote, text="Run", width=14,
-                        command=runnButtonOnPres)
-valdButton = ttk.Button(valdNote, text="Calibrate",
-                        width=14, command=valdButtonOnPres)
-stopButtonrunnstat = ttk.Button(
-    runnNote, text="Stop", width=14, command=stopButtonOnPres)
-stopButtonvaldstat = ttk.Button(
-    valdNote, text="Stop", width=14, command=stopButtonOnPres)
+runnButton = ttk.Button(runnNote, text="Run", width=14, command=runnButtonOnPres)
+valdButton = ttk.Button(valdNote, text="Calibrate", width=14, command=valdButtonOnPres)
+stopButtonrunnstat = ttk.Button(runnNote, text="Stop", width=14, command=stopButtonOnPres)
+stopButtonvaldstat = ttk.Button(valdNote, text="Stop", width=14, command=stopButtonOnPres)
 
 
 # spinbox
-startTimeMonSpin = ttk.Spinbox(
-    container2, values=months, width=10, state="readonly", textvariable=startTimeMonStrg)
-timeSpin = ttk.Spinbox(container2, values=timeSteps,
-                       width=10, state="readonly", textvariable=timeStrg)
-enddTimeMontSpin = ttk.Spinbox(
-    valdNote, values=months, width=12, state="readonly", textvariable=enddTimeMontStrg)
+startTimeMonSpin = ttk.Spinbox(container2, values=months, width=10, state="readonly", textvariable=startTimeMonStrg)
+timeSpin = ttk.Spinbox(container2, values=timeSteps, width=10, state="readonly", textvariable=timeStrg)
+enddTimeMontSpin = ttk.Spinbox(valdNote, values=months, width=12, state="readonly", textvariable=enddTimeMontStrg)
 theeLabl = tk.Label(container3, width=400, height=400)
 
 
@@ -1338,31 +1274,22 @@ pxx1 = pox1 + 150
 poy1 = 40
 
 
-constNumberEntryLabl.place(x=pox1, y=poy1)
-const1UpLimtLabl.place(x=pox1, y=poy1 + dif1)
-const1LoLimtLabl.place(x=pox1, y=poy1 + (dif1*2))
-const2UpLimtLabl.place(x=pox1, y=poy1 + (dif1*3))
-const2LoLimtLabl.place(x=pox1, y=poy1 + (dif1*4))
-const3UpLimtLabl.place(x=pox1, y=poy1 + (dif1*5))
-const3LoLimtLabl.place(x=pox1, y=poy1 + (dif1*6))
-const4UpLimtLabl.place(x=pox1, y=poy1 + (dif1*7))
-const4LoLimtLabl.place(x=pox1, y=poy1 + (dif1*8))
-spedLabl.place(x=pox1, y=poy1 + (dif1*9))
-cellSizegridLabl.place(x=pox1, y=poy1 + (dif1*8))
+# constNumberEntryLabl.place(x=pox1, y=poy1)
+for i in list(range(1, num_constraints + 1)):
+    constUpLimtLabels[i-1].place(x=pox1, y=poy1 + (dif1*i))
+    constLoLimtLabels[i-1].place(x=pox1, y=poy1 + (dif1*(i+1)))
+
+spedLabl.place(x=pox1, y=poy1 + (dif1*(2*num_constraints+1)))
+cellSizegridLabl.place(x=pox1, y=poy1 + (dif1*2*num_constraints))
 
 
-constNumberEntry.place(x=pxx1, y=poy1)
+# constNumberEntry.place(x=pxx1, y=poy1)
+for i in list(range(1, num_constraints + 1)):
+    const1UpLimtEntrys[i-1].place(x=pxx1, y=poy1 + (dif1*i))
+    const1LoLimtEntrys[i-1].place(x=pxx1, y=poy1 + (dif1*(i+1)))
 
-const1UpLimtEntry.place(x=pxx1, y=poy1 + (dif1*2))
-const1LoLimtEntry.place(x=pxx1, y=poy1 + dif1)
-const2UpLimtEntry.place(x=pxx1, y=poy1 + (dif1*2))
-const2LoLimtEntry.place(x=pxx1, y=poy1 + (dif1*3))
-const3UpLimtEntry.place(x=pxx1, y=poy1 + (dif1*4))
-const3LoLimtEntry.place(x=pxx1, y=poy1 + (dif1*5))
-const4UpLimtEntry.place(x=pxx1, y=poy1 + (dif1*6))
-const4LoLimtEntry.place(x=pxx1, y=poy1 + (dif1*7))
-spedEntry.place(x=pxx1, y=poy1 + (dif1*9))
-cellSizegridEntry.place(x=pxx1, y=poy1 + (dif1*8))
+spedEntry.place(x=pxx1, y=poy1 + (dif1*(2*num_constraints+1)))
+cellSizegridEntry.place(x=pxx1, y=poy1 + (dif1*2*num_constraints))
 
 
 dif2 = 40
