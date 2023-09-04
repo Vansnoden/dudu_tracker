@@ -29,9 +29,9 @@ plt.ioff()
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        canvas = tk.Canvas(self)
+        canvas = tk.Canvas(self,*args, **kwargs)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        self.scrollable_frame = ttk.Frame(canvas, height=800, width=250)
+        self.scrollable_frame = ttk.Frame(canvas, *args, **kwargs)
 
         self.scrollable_frame.bind(
             "<Configure>",
@@ -1172,7 +1172,7 @@ enddTimeMontStrg.set(months[0])
 enddTimeYearStrg.set("2021")
 
 # clen
-container1 = ScrollableFrame(apWindow, height=500, width=250)
+container1 = ScrollableFrame(apWindow, height=500, width=260)
 container1.grid(row=0, column=0, padx=5, pady=5)
 # container1 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Data inputs", width=260, height=500)
 containerMiddle = tk.Frame(apWindow, bg="#F5F5F5", width=250, height=500)
@@ -1264,7 +1264,6 @@ totlSimStepLabl = ttk.Label(container3, textvariable=totlSimStepStrg, background
 simlValuStepLabl = ttk.Label(container3, text="Simulation", background=bgColr)
 mseeLabl = ttk.Label(valdNote, text="Diff = ", background=bgColr)
 mseeOutpValdLabl = ttk.Label(valdNote, textvariable=mseeStrg, background=bgColr, width=20)
-
 
 latdLablInVald = ttk.Label(valdNote, text="Lat", background=bgColr)
 longLablInVald = ttk.Label(valdNote, text="Lon", background=bgColr)
