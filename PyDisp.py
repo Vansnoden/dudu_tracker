@@ -18,9 +18,35 @@ from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib
 from matplotlib import pyplot as plt
 from shapely.geometry import Point
+from tkinter.constants import *
+
 matplotlib.use("TkAgg")
 
 plt.ioff()
+
+
+# Scrollable frame class
+class ScrollableFrame(ttk.Frame):
+    def __init__(self, container, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        canvas = tk.Canvas(self)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.scrollable_frame = ttk.Frame(canvas, height=800, width=250)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
 
 # functions
 
@@ -1079,9 +1105,25 @@ apWindow = tk.Tk()
 buttonWidth = 28
 
 apWindow.wm_title("PyDisp")  # the title
-apWindow.geometry("1200x600+100+40")
+# apWindow.geometry("1200x600+100+40")
+apWindow.geometry("1255x525")
 # apWindow.iconbitmap(r"C:\Users\peter\Downloads\facebook_cover_photo_1.ico")
 apWindow.configure(background="#F5F5F5")
+# main_container = tk.Frame(apWindow, bg="#FF0000")
+# main_container.grid(row=0, column=0, padx=10, pady=5)
+# container = ttk.Frame(apWindow, width=260, height=500)
+# canvas = tk.Canvas(container)
+# scrollbar = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
+# scrollable_frame = ttk.Frame(canvas)
+# scrollable_frame.bind(
+#     "<Configure>",
+#     lambda e: canvas.configure(
+#         scrollregion=canvas.bbox("all")
+#     )
+# )
+# canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+# canvas.configure(yscrollcommand=scrollbar.set)
+
 
 # variables
 onColr = "#28BE28"
@@ -1130,10 +1172,17 @@ enddTimeMontStrg.set(months[0])
 enddTimeYearStrg.set("2021")
 
 # clen
-container1 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Data inputs", width=260, height=500)
-container2 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Starting period", width=260, height=190)
+container1 = ScrollableFrame(apWindow, height=500, width=250)
+container1.grid(row=0, column=0, padx=5, pady=5)
+# container1 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Data inputs", width=260, height=500)
+containerMiddle = tk.Frame(apWindow, bg="#F5F5F5", width=250, height=500)
+containerMiddle.grid(row=0, column=1, padx=5, pady=5)
+container2 = tk.LabelFrame(containerMiddle, bg="#F5F5F5", text="Starting period",width=260, height=190) 
+container2.grid(row=0, column=0, padx=5, pady=5)
 container3 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Output", width=560, height=500)
-container4 = tk.LabelFrame(apWindow, bg="#F5F5F5", width=260, height=280)
+container3.grid(row=0, column=2, padx=5, pady=5)
+container4 = tk.LabelFrame(containerMiddle, bg="#F5F5F5", width=260, height=280)
+container4.grid(row=1, column=0, padx=5, pady=5)
 containergrph = tk.LabelFrame(container3, bg="#F5F5F5", bd=0, width=500, height=400)
 noteBook = ttk.Notebook(container4, width=248, height=248)
 valdNote = ttk.Frame(noteBook)
@@ -1262,10 +1311,10 @@ theeLabl = tk.Label(container3, width=400, height=400)
 
 
 # placing elements
-container1.place(x=20, y=60)
-container2.place(x=320, y=60)
-container3.place(x=620, y=60)
-container4.place(x=320, y=280)
+# container1.place(x=20, y=60)
+# container2.place(x=320, y=60)
+# container3.place(x=620, y=60)
+# container4.place(x=320, y=280)
 
 
 dif1 = 44
@@ -1275,22 +1324,18 @@ poy1 = 40
 
 
 # constNumberEntryLabl.place(x=pox1, y=poy1)
-for i in list(range(1, num_constraints + 1)):
-    constUpLimtLabels[i-1].place(x=pox1, y=poy1 + (dif1*i))
-    constLoLimtLabels[i-1].place(x=pox1, y=poy1 + (dif1*(i+1)))
+for i in list(range(0, num_constraints)):
+    # label positioning
+    constUpLimtLabels[i].place(x=pox1, y=poy1 + (dif1*i))
+    constLoLimtLabels[i].place(x=pox1, y=poy1 + (dif1*(i+1)))
+    # input positioning
+    const1UpLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*i))
+    const1LoLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*(i+1)))
 
 spedLabl.place(x=pox1, y=poy1 + (dif1*(2*num_constraints+1)))
 cellSizegridLabl.place(x=pox1, y=poy1 + (dif1*2*num_constraints))
-
-
-# constNumberEntry.place(x=pxx1, y=poy1)
-for i in list(range(1, num_constraints + 1)):
-    const1UpLimtEntrys[i-1].place(x=pxx1, y=poy1 + (dif1*i))
-    const1LoLimtEntrys[i-1].place(x=pxx1, y=poy1 + (dif1*(i+1)))
-
 spedEntry.place(x=pxx1, y=poy1 + (dif1*(2*num_constraints+1)))
 cellSizegridEntry.place(x=pxx1, y=poy1 + (dif1*2*num_constraints))
-
 
 dif2 = 40
 pox2 = 10
@@ -1305,7 +1350,6 @@ startTimeYearEntry.place(x=pxx2, y=poy2 + dif2)
 timeLabl.place(x=pox2, y=poy2 + (dif2*2))
 timeSpin.place(x=pxx2, y=poy2 + (dif2*2))
 
-
 dif3 = 40
 pox3 = 28
 pxx3 = pox3 + 160
@@ -1315,7 +1359,6 @@ simlValuStepLabl.place(x=pxx3, y=poy3)
 currentSimlStepLabl.place(x=pxx3+80, y=poy3)
 outOfStepLabl.place(x=pxx3+120, y=poy3)
 totlSimStepLabl.place(x=pxx3+160, y=poy3)
-
 
 dif4 = 30
 pox4 = 10
@@ -1327,12 +1370,10 @@ valdButton.place(x=pox4, y=poy4 + (dif4*6.5))
 stopButtonrunnstat.place(x=pxx4 + 68, y=poy4 + (dif4*6.5))
 stopButtonvaldstat.place(x=pxx4 + 68, y=poy4 + (dif4*6.5))
 
-
 latdLablInVald.place(x=pox4, y=poy4)
 longLablInVald.place(x=pox4, y=poy4 + dif4)
 startTimeMonLablInVald.place(x=pox4, y=poy4 + (dif4*2))
 startTimeYearLablInVald.place(x=pox4, y=poy4 + (dif4*3))
-
 
 latdEntry.place(x=pxx4, y=poy4)
 longEntry.place(x=pxx4, y=poy4 + dif4)
@@ -1340,11 +1381,8 @@ enddTimeMontSpin.place(x=pxx4, y=poy4 + (dif4*2))
 enddTimeYearEntry.place(x=pxx4, y=poy4 + (dif4*3))
 
 mseeLabl.place(x=pox4, y=poy4 + (dif4*5))
-
 mseeOutpValdLabl.place(x=pxx4, y=poy4 + (dif4*5))
-
 noteBook.place(x=2.8, y=1)
-
 duraLabl.place(x=pox4, y=poy4 + (dif4*3))
 duraEntry.place(x=pxx4, y=poy4 + (dif4*3))
 
@@ -1367,5 +1405,6 @@ plotPart.get_tk_widget().place(x=0, y=0)
 
 # folderButton.config(state="disabled")
 
+# container1.pack()
 
 apWindow.mainloop()
