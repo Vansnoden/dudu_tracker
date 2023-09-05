@@ -25,6 +25,9 @@ matplotlib.use("TkAgg")
 plt.ioff()
 
 
+num_constraints = 2 #very important
+
+
 # Scrollable frame class
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
@@ -32,18 +35,14 @@ class ScrollableFrame(ttk.Frame):
         canvas = tk.Canvas(self,*args, **kwargs)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
         self.scrollable_frame = ttk.Frame(canvas, *args, **kwargs)
-
         self.scrollable_frame.bind(
             "<Configure>",
             lambda e: canvas.configure(
                 scrollregion=canvas.bbox("all")
             )
         )
-
         canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-
         canvas.configure(yscrollcommand=scrollbar.set)
-
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
@@ -546,6 +545,16 @@ def stopButtonOnPres():
     stopstat = 1
 
 
+def test_constraints(constraintsUp:list,constraintsLo:list, cdatalist, idMax) -> bool:
+    res = True
+    for i in list(range(0, len(constraintsUp))):
+        if cdatalist[i][idMax] <= float(constraintsUp[i]) and cdatalist[i][idMax] > float(constraintsLo[i]):
+            res = res and True
+        else:
+            res = res and False
+    return res
+
+
 # functions
 def runnButtonOnPres():
     def stoprunn():
@@ -588,14 +597,21 @@ def runnButtonOnPres():
             currentTimeYearStrg.set(year)
             currentTimeMonStrg.set(months[mnth])
             # --------------------------------------data-----------------------------------------------
-            const1Ul = float(const1UpLimtStrg.get())
-            const1Lo = float(const1LoLimtStrg.get())
-            const2Ul = float(const2UpLimtStrg.get())
-            const2Lo = float(const2LoLimtStrg.get())
-            const3Ul = float(const3UpLimtStrg.get())
-            const3Lo = float(const3LoLimtStrg.get())
-            const4Ul = float(const4UpLimtStrg.get())
-            const4Lo = float(const4LoLimtStrg.get())
+            constUls = []
+            constLos = []
+            for item in constUpLimtStrg :
+                constUls.append(float(item.get()))
+            for item in constLoLimtStrg :
+                constLos.append(item.get())
+
+            # const1Ul = float(const1UpLimtStrg.get())
+            # const1Lo = float(const1LoLimtStrg.get())
+            # const2Ul = float(const2UpLimtStrg.get())
+            # const2Lo = float(const2LoLimtStrg.get())
+            # const3Ul = float(const3UpLimtStrg.get())
+            # const3Lo = float(const3LoLimtStrg.get())
+            # const4Ul = float(const4UpLimtStrg.get())
+            # const4Lo = float(const4LoLimtStrg.get())
 
             # --------------------------------import start---------------------------------------------
             geoPandaDataFrame = gpd.read_file(r"{}".format(
@@ -608,46 +624,26 @@ def runnButtonOnPres():
             codeUseGridData = pd.read_csv(r"{}".format(
                 pathname+"/resources/data/grid.csv")).to_numpy()
 
-            Constraint1Data = np.zeros(codeUseGridData.shape[0])
-            Constraint2Data = np.zeros(codeUseGridData.shape[0])
-            Constraint3Data = np.zeros(codeUseGridData.shape[0])
-            Constraint4Data = np.zeros(codeUseGridData.shape[0])
+            ConstraintData = []
+            for i in list(range(0,num_constraints)):
+                ConstraintData.append(np.zeros(codeUseGridData.shape[0]))
 
-            Constraint1File = r"{}".format(
-                pathname+"/resources/data/Constraint 1.csv")
-            if os.path.isfile(Constraint1File):
-                Constraint1Data = pd.read_csv(
-                    Constraint1File, header=None).to_numpy()[:, 0]
-            else:
-                const1Ul = 1
-                const1Lo = -1
+            # Constraint1Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint2Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint3Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint4Data = np.zeros(codeUseGridData.shape[0])
 
-            Constraint2File = r"{}".format(
-                pathname+"/resources/data/Constraint 2.csv")
-            if os.path.isfile(Constraint2File):
-                Constraint2Data = pd.read_csv(
-                    Constraint2File, header=None).to_numpy()[:, 0]
-            else:
-                const2Ul = 1
-                const2Lo = -1
+            ConstraintFiles = []
+            for i in list(range(0,num_constraints)):
+                ConstraintFile = f"{pathname}/resources/data/Constraint {i}.csv"
+                if os.path.isfile(ConstraintFile):
+                    ConstraintData[i] = pd.read_csv(
+                        ConstraintFile, header=None).to_numpy()[:, 0]
+                else:
+                    const1Ul = 1
+                    const1Lo = -1
+                ConstraintFiles.append(ConstraintFile)
 
-            Constraint3File = r"{}".format(
-                pathname+"/resources/data/Constraint 3.csv")
-            if os.path.isfile(Constraint3File):
-                Constraint3Data = pd.read_csv(
-                    Constraint3File, header=None).to_numpy()[:, 0]
-            else:
-                const3Ul = 1
-                const3Lo = -1
-
-            Constraint4File = r"{}".format(
-                pathname+"/resources/data/Constraint 4.csv")
-            if os.path.isfile(Constraint4File):
-                Constraint4Data = pd.read_csv(
-                    Constraint4File, header=None).to_numpy()[:, 0]
-            else:
-                const4Ul = 1
-                const4Lo = -1
 
             neighbourData = pd.read_csv(r"{}".format(
                 pathname+"/resources/data/neigbourhood.csv"), header=None).to_numpy().astype(int)
@@ -702,7 +698,7 @@ def runnButtonOnPres():
 
                     idMax = int(IdVoisin[p])
                     statut[idMax] = 1
-                    if ((statut[idMax] != 2) and (Constraint1Data[idMax] > const1Lo and Constraint1Data[idMax] <= const1Ul) and (Constraint2Data[idMax] > const2Lo and Constraint2Data[idMax] <= const2Ul) and (Constraint3Data[idMax] > const3Lo and Constraint3Data[idMax] <= const3Ul) and (Constraint4Data[idMax] > const4Lo and Constraint4Data[idMax] <= const4Ul)):
+                    if (statut[idMax] != 2) and test_constraints(constUls, constLos, ConstraintData, idMax):
                         statut[idMax] = 2
 
                 if stopstat == 1:
@@ -857,14 +853,22 @@ def valdButtonOnPres():
             # --------------------------------global variables--------------------------------------------
 
             # --------------------------------simulation variables ---------------------------------------
-            const1Ul = float(const1UpLimtStrg.get())
-            const1Lo = float(const1LoLimtStrg.get())
-            const2Ul = float(const2UpLimtStrg.get())
-            const2Lo = float(const2LoLimtStrg.get())
-            const3Ul = float(const3UpLimtStrg.get())
-            const3Lo = float(const3LoLimtStrg.get())
-            const4Ul = float(const4UpLimtStrg.get())
-            const4Lo = float(const4LoLimtStrg.get())
+            constUls = []
+            constLos = []
+            for item in constUpLimtStrg :
+                constUls.append(float(item.get()))
+            for item in constLoLimtStrg :
+                constLos.append(item.get())
+            
+            # const1Ul = float(const1UpLimtStrg.get())
+            # const1Lo = float(const1LoLimtStrg.get())
+            # const2Ul = float(const2UpLimtStrg.get())
+            # const2Lo = float(const2LoLimtStrg.get())
+            # const3Ul = float(const3UpLimtStrg.get())
+            # const3Lo = float(const3LoLimtStrg.get())
+            # const4Ul = float(const4UpLimtStrg.get())
+            # const4Lo = float(const4LoLimtStrg.get())
+
             latdVald = float(latdStrg.get())
             longVald = float(longStrg.get())
 
@@ -884,46 +888,60 @@ def valdButtonOnPres():
             codeUseGridData = pd.read_csv(r"{}".format(
                 pathname+"/resources/data/grid.csv")).to_numpy()
 
-            Constraint1Data = np.zeros(codeUseGridData.shape[0])
-            Constraint2Data = np.zeros(codeUseGridData.shape[0])
-            Constraint3Data = np.zeros(codeUseGridData.shape[0])
-            Constraint4Data = np.zeros(codeUseGridData.shape[0])
+            ConstraintData = []
+            for i in list(range(0,num_constraints)):
+                ConstraintData.append(np.zeros(codeUseGridData.shape[0]))
+            # Constraint1Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint2Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint3Data = np.zeros(codeUseGridData.shape[0])
+            # Constraint4Data = np.zeros(codeUseGridData.shape[0])
 
-            Constraint1File = r"{}".format(
-                pathname+"/resources/data/Constraint 1.csv")
-            if os.path.isfile(Constraint1File):
-                Constraint1Data = pd.read_csv(
-                    Constraint1File, header=None).to_numpy()[:, 0]
-            else:
-                const1Ul = 1
-                const1Lo = -1
+            ConstraintFiles = []
+            for i in list(range(0,num_constraints)):
+                ConstraintFile = f"{pathname}/resources/data/Constraint {i}.csv"
+                if os.path.isfile(ConstraintFile):
+                    ConstraintData[i] = pd.read_csv(
+                        ConstraintFile, header=None).to_numpy()[:, 0]
+                else:
+                    const1Ul = 1
+                    const1Lo = -1
+                ConstraintFiles.append(ConstraintFile)
 
-            Constraint2File = r"{}".format(
-                pathname+"/resources/data/Constraint 2.csv")
-            if os.path.isfile(Constraint2File):
-                Constraint2Data = pd.read_csv(
-                    Constraint2File, header=None).to_numpy()[:, 0]
-            else:
-                const2Ul = 1
-                const2Lo = -1
+            # Constraint1File = r"{}".format(
+            #     pathname+"/resources/data/Constraint 1.csv")
+            # if os.path.isfile(Constraint1File):
+            #     Constraint1Data = pd.read_csv(
+            #         Constraint1File, header=None).to_numpy()[:, 0]
+            # else:
+            #     const1Ul = 1
+            #     const1Lo = -1
 
-            Constraint3File = r"{}".format(
-                pathname+"/resources/data/Constraint 3.csv")
-            if os.path.isfile(Constraint3File):
-                Constraint3Data = pd.read_csv(
-                    Constraint3File, header=None).to_numpy()[:, 0]
-            else:
-                const3Ul = 1
-                const3Lo = -1
+            # Constraint2File = r"{}".format(
+            #     pathname+"/resources/data/Constraint 2.csv")
+            # if os.path.isfile(Constraint2File):
+            #     Constraint2Data = pd.read_csv(
+            #         Constraint2File, header=None).to_numpy()[:, 0]
+            # else:
+            #     const2Ul = 1
+            #     const2Lo = -1
 
-            Constraint4File = r"{}".format(
-                pathname+"/resources/data/Constraint 4.csv")
-            if os.path.isfile(Constraint4File):
-                Constraint4Data = pd.read_csv(
-                    Constraint4File, header=None).to_numpy()[:, 0]
-            else:
-                const4Ul = 1
-                const4Lo = -1
+            # Constraint3File = r"{}".format(
+            #     pathname+"/resources/data/Constraint 3.csv")
+            # if os.path.isfile(Constraint3File):
+            #     Constraint3Data = pd.read_csv(
+            #         Constraint3File, header=None).to_numpy()[:, 0]
+            # else:
+            #     const3Ul = 1
+            #     const3Lo = -1
+
+            # Constraint4File = r"{}".format(
+            #     pathname+"/resources/data/Constraint 4.csv")
+            # if os.path.isfile(Constraint4File):
+            #     Constraint4Data = pd.read_csv(
+            #         Constraint4File, header=None).to_numpy()[:, 0]
+            # else:
+            #     const4Ul = 1
+            #     const4Lo = -1
 
             neighbourHood = pd.read_csv(r"{}".format(
                 pathname+"/resources/data/neigbourhood.csv"), header=None).to_numpy().astype(int)
@@ -971,7 +989,7 @@ def valdButtonOnPres():
 
                     idMax = int(IdVoisin[p])
                     statut[idMax] = 1
-                    if ((statut[idMax] != 2) and (Constraint1Data[idMax] > const1Lo and Constraint1Data[idMax] <= const1Ul) and (Constraint2Data[idMax] > const2Lo and Constraint2Data[idMax] <= const2Ul) and (Constraint3Data[idMax] > const3Lo and Constraint3Data[idMax] <= const3Ul) and (Constraint4Data[idMax] > const4Lo and Constraint4Data[idMax] <= const4Ul)):
+                    if (statut[idMax] != 2) and test_constraints(constUls, constLos, ConstraintData, idMax):
                         statut[idMax] = 2
 
                 if stopstat == 1:
@@ -1106,7 +1124,7 @@ buttonWidth = 28
 
 apWindow.wm_title("PyDisp")  # the title
 # apWindow.geometry("1200x600+100+40")
-apWindow.geometry("1255x525")
+apWindow.geometry("1100x525")
 # apWindow.iconbitmap(r"C:\Users\peter\Downloads\facebook_cover_photo_1.ico")
 apWindow.configure(background="#F5F5F5")
 # main_container = tk.Frame(apWindow, bg="#FF0000")
@@ -1134,7 +1152,7 @@ months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", 
 timeSteps = ("Monthly", "Yearly")
 statusFl = {"shp": 0, "dbf": 0, "shx": 0, "bio1": 0, "bio2": 0, "abio1": 0, "abio2": 0, "start": 0, "valid": 0}
 stopstat = 0
-num_constraints = 5
+
 constNumberStrg = tk.StringVar()
 spedStrg = tk.StringVar()
 cellSizegridStrg = tk.StringVar()
@@ -1172,7 +1190,7 @@ enddTimeMontStrg.set(months[0])
 enddTimeYearStrg.set("2021")
 
 # clen
-container1 = ScrollableFrame(apWindow, height=500, width=260)
+container1 = ScrollableFrame(apWindow, width=20, height=500)
 container1.grid(row=0, column=0, padx=5, pady=5)
 # container1 = tk.LabelFrame(apWindow, bg="#F5F5F5", text="Data inputs", width=260, height=500)
 containerMiddle = tk.Frame(apWindow, bg="#F5F5F5", width=250, height=500)
@@ -1246,14 +1264,27 @@ menubar.entryconfig(2, state="normal")  # Affected area
 constUpLimtLabels = []
 constLoLimtLabels = []
 
+const1UpLimtEntrys = []
+const1LoLimtEntrys = []
+
+
+constTitleLabelInput = ttk.Label(container1, text=f"INPUTS", underline=True).pack()
+
 for i in list(range(1, num_constraints + 1)):
-    constUpLimtLabl = ttk.Label(container1, text=f"Constraint {i} upper limit", background=bgColr)
-    constLoLimtLabl = ttk.Label(container1, text=f"Constraint {i} lower limit", background=bgColr)
+    constUpLimtLabl = ttk.Label(container1, text=f"Constraint {i} upper limit").pack() #background=bgColr
+    const1UpLimtEntry = ttk.Entry(container1, textvariable=constUpLimtStrg[i-1]).pack()
+    constLoLimtLabl = ttk.Label(container1, text=f"Constraint {i} lower limit").pack()
+    const1LoLimtEntry = ttk.Entry(container1, textvariable=constLoLimtStrg[i-1]).pack()
     constUpLimtLabels.append(constUpLimtLabl)
     constLoLimtLabels.append(constLoLimtLabl)
+    const1UpLimtEntrys.append(const1UpLimtEntry)
+    const1LoLimtEntrys.append(const1LoLimtEntry)
+spedLabl = ttk.Label(container1, text="Travel speed (km/time step)").pack()
+spedEntry = ttk.Entry(container1, textvariable=spedStrg).pack()
+cellSizegridLabl = ttk.Label(container1, text="Cell size (km)",).pack()
+cellSizegridEntry = ttk.Entry(container1, textvariable=cellSizegridStrg).pack()
 
-spedLabl = ttk.Label(container1, text="Travel speed (km/time step)", background=bgColr)
-cellSizegridLabl = ttk.Label(container1, text="Cell size (km)", background=bgColr)
+
 timeLabl = ttk.Label(container2, text="Time step", background=bgColr)
 duraLabl = ttk.Label(runnNote, text="Duration", background=bgColr)
 startTimeMonLabl = ttk.Label(container2, text="Month", background=bgColr)
@@ -1273,19 +1304,13 @@ startTimeYearLablInVald = ttk.Label(valdNote, text="Year", background=bgColr)
 
 # constNumberEntry = ttk.Entry(container1, textvariable=constNumberStrg, width=10)
 
-const1UpLimtEntrys = []
-const1LoLimtEntrys = []
+# # text inputs
+# for i in list(range(1, num_constraints+1)):
+#     const1UpLimtEntry = ttk.Entry(container1, textvariable=constUpLimtStrg[i-1], width=10)
+#     const1LoLimtEntry = ttk.Entry(container1, textvariable=constLoLimtStrg[i-1], width=10)
+#     const1UpLimtEntrys.append(const1UpLimtEntry)
+#     const1LoLimtEntrys.append(const1LoLimtEntry)
 
-# text inputs
-for i in list(range(1, num_constraints+1)):
-    const1UpLimtEntry = ttk.Entry(container1, textvariable=constUpLimtStrg[i-1], width=10)
-    const1LoLimtEntry = ttk.Entry(container1, textvariable=constLoLimtStrg[i-1], width=10)
-    const1UpLimtEntrys.append(const1UpLimtEntry)
-    const1LoLimtEntrys.append(const1LoLimtEntry)
-
-
-spedEntry = ttk.Entry(container1, textvariable=spedStrg, width=10)
-cellSizegridEntry = ttk.Entry(container1, textvariable=cellSizegridStrg, width=10)
 duraEntry = ttk.Entry(runnNote, textvariable=duraStrg, width=12)
 startTimeYearEntry = ttk.Entry(container2, textvariable=startTimeYearStrg, width=12)
 
@@ -1323,18 +1348,18 @@ poy1 = 40
 
 
 # constNumberEntryLabl.place(x=pox1, y=poy1)
-for i in list(range(0, num_constraints)):
-    # label positioning
-    constUpLimtLabels[i].place(x=pox1, y=poy1 + (dif1*i))
-    constLoLimtLabels[i].place(x=pox1, y=poy1 + (dif1*(i+1)))
-    # input positioning
-    const1UpLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*i))
-    const1LoLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*(i+1)))
+# for i in list(range(0, num_constraints)):
+#     # label positioning
+#     constUpLimtLabels[i].place(x=pox1, y=poy1 + (dif1*i))
+#     constLoLimtLabels[i].place(x=pox1, y=poy1 + (dif1*(i+1)))
+#     # input positioning
+#     const1UpLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*i))
+#     const1LoLimtEntrys[i].place(x=pxx1, y=poy1 + (dif1*(i+1)))
 
-spedLabl.place(x=pox1, y=poy1 + (dif1*(2*num_constraints+1)))
-cellSizegridLabl.place(x=pox1, y=poy1 + (dif1*2*num_constraints))
-spedEntry.place(x=pxx1, y=poy1 + (dif1*(2*num_constraints+1)))
-cellSizegridEntry.place(x=pxx1, y=poy1 + (dif1*2*num_constraints))
+# spedLabl.place(x=pox1, y=poy1 + (dif1*(2*num_constraints+1)))
+# cellSizegridLabl.place(x=pox1, y=poy1 + (dif1*2*num_constraints))
+# spedEntry.place(x=pxx1, y=poy1 + (dif1*(2*num_constraints+1)))
+# cellSizegridEntry.place(x=pxx1, y=poy1 + (dif1*2*num_constraints))
 
 dif2 = 40
 pox2 = 10
