@@ -1119,6 +1119,28 @@ def readProjectFolderLocation():
 
 # building UI interface
 
+
+class Application(tk.Frame):
+    def __init__(self, parent, constnum_label=None, numconstraintvar=None, constnum_entry=None):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.constnum_label = ttk.Label(self, text=f"Set the number of constraints").pack() #background=bgColr
+        self.numconstraintvar = tk.StringVar()
+        self.constnum_entry = ttk.Entry(self, textvariable=self.numconstraintvar).pack()
+        new_win_button = tk.Button(self, text="Set Constraint", command=self.set_numconstraint)
+        new_win_button.pack(side="top", padx=20, pady=20)
+        
+    def set_numconstraint(self):
+        global num_constraints
+        num_constraints = int(self.numconstraintvar.get())
+        self.parent.destroy()
+
+
+root = tk.Tk()
+Application(root).pack(fill="both", expand=True)
+root.mainloop()
+
+
 apWindow = tk.Tk()
 buttonWidth = 28
 
