@@ -1,11 +1,26 @@
+import importlib
 import math
+import pkgutil
 import shapefile as shp
 import os
 import shutil
 import pandas as pd
 import numpy as np
-import rasterio as rio
+import osgeo
 import geopandas as gpd
+import rasterio
+# importing all rasterio modules as hey as preventing desktop version to be build successfully
+# package = importlib.import_module('rasterio')
+# __all__ = []
+# for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__):
+#     __all__.append(module_name)
+#     _module = loader.find_module(module_name).load_module(module_name)
+#     globals()[module_name] = _module
+
+import rasterio.sample as smp
+import rasterio.vrt as vrt
+import rasterio._features as feat
+import rasterio as rio
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
