@@ -4,3 +4,5 @@ __pycache__/
 static/data/outputs/*
 medias/
 static_root/
+output/
+SAlvador/

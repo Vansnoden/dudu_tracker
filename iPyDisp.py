@@ -139,9 +139,11 @@ def importAffectedThreadStat(dataPathInaffected, affectedNumberInaffected):
 
 
 def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
+    global pathname
     try:
 
         # ----------------------------------stat progress------------------------------------------------
+        print(f"Importing constraint: {ConstraintNumberInConst}")
         showProgress("indeterminate", "Importing " +
                      ConstraintNumberInConst + " data")
         docmExtn = os.path.splitext(dataPathInConst)[1]
@@ -189,6 +191,7 @@ def importConstraintThreadStat(dataPathInConst, ConstraintNumberInConst):
 
 
 def importConstraint(ConstraintNumber):
+    global pathname
     try:
         dataPath = filedialog.askopenfilename(title="Import " + ConstraintNumber + " data",
                                               filetypes=[("tif files", "*.tif")])
@@ -649,14 +652,13 @@ def runnButtonOnPres():
             # Constraint4Data = np.zeros(codeUseGridData.shape[0])
 
             ConstraintFiles = []
-            for i in list(range(0,num_constraints)):
+            for i in list(range(1, num_constraints + 1)):
                 ConstraintFile = f"{pathname}/resources/data/Constraint {i}.csv"
                 if os.path.isfile(ConstraintFile):
-                    ConstraintData[i] = pd.read_csv(
-                        ConstraintFile, header=None).to_numpy()[:, 0]
+                    ConstraintData[i - 1] = pd.read_csv(ConstraintFile, header = None).to_numpy()[:,0]
                 else:
-                    const1Ul = 1
-                    const1Lo = -1
+                    constUls[i - 1] = 1
+                    constLos[i - 1] = -1
                 ConstraintFiles.append(ConstraintFile)
 
 
@@ -873,7 +875,7 @@ def valdButtonOnPres():
             for item in constUpLimtStrg :
                 constUls.append(float(item.get()))
             for item in constLoLimtStrg :
-                constLos.append(item.get())
+                constLos.append(float(item.get()))
             
             # const1Ul = float(const1UpLimtStrg.get())
             # const1Lo = float(const1LoLimtStrg.get())
@@ -912,10 +914,10 @@ def valdButtonOnPres():
             # Constraint4Data = np.zeros(codeUseGridData.shape[0])
 
             ConstraintFiles = []
-            for i in list(range(0,num_constraints)):
+            for i in list(range(1,num_constraints+1)):
                 ConstraintFile = f"{pathname}/resources/data/Constraint {i}.csv"
                 if os.path.isfile(ConstraintFile):
-                    ConstraintData[i] = pd.read_csv(
+                    ConstraintData[i-1] = pd.read_csv(
                         ConstraintFile, header=None).to_numpy()[:, 0]
                 else:
                     const1Ul = 1
@@ -1268,18 +1270,15 @@ datamenu = tk.Menu(menubar, tearoff=0)
 constUpLimtStrg = []
 constLoLimtStrg = []
 
-for i in range(1,num_constraints + 1):
+for i in list(range(1,num_constraints + 1)):
     new_const_up_lim = tk.StringVar()
     new_const_lo_lim = tk.StringVar()
     new_const_up_lim.set("0.0")
     new_const_lo_lim.set("0.0")
     constUpLimtStrg.append(new_const_up_lim)
     constLoLimtStrg.append(new_const_lo_lim)
-
-
-for i in list(range(1,num_constraints + 1)):
-    datamenu.add_command(label=f"Constraint {i} *", command=lambda: importConstraint(f"Constraint {i}"))
-
+    datamenu.add_command(label=f"Constraint {i} *", command=lambda j=i: importConstraint(f"Constraint {j}"))
+    
 menubar.add_cascade(label="Import data *", menu=datamenu)
 
 valdmenu = tk.Menu(menubar, tearoff=0)
@@ -1316,6 +1315,7 @@ for i in list(range(1, num_constraints + 1)):
     constLoLimtLabels.append(constLoLimtLabl)
     const1UpLimtEntrys.append(const1UpLimtEntry)
     const1LoLimtEntrys.append(const1LoLimtEntry)
+
 spedLabl = ttk.Label(container1, text="Travel speed (km/time step)").pack()
 spedEntry = ttk.Entry(container1, textvariable=spedStrg).pack()
 cellSizegridLabl = ttk.Label(container1, text="Cell size (km)",).pack()
