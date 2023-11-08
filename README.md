@@ -13,3 +13,6 @@ The current code contains the **Django-web** application and the code for the de
 
 ```iPyDisp.py ```
 
+A public version is available at https://dudutracker.monadeware.com
+
+Get help and User guide at: https://dudutracker.monadeware.com/help/
