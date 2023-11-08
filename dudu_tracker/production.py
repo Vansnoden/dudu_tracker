@@ -10,7 +10,7 @@ config = {
     'WEB_DOMAIN': os.getenv('WEB_DOMAIN')
 }
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = [config['WEB_DOMAIN']]
 CSRF_TRUSTED_ORIGINS=["https://dudutracker.monadeware.com", "http://dudutracker.monadeware.com"]
 
