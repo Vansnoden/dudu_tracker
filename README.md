@@ -46,7 +46,7 @@ In production mode
 
 * For building desktop executable we recommend the use of auto-py-to-exe see: <a href="https://github.com/brentvollebregt/auto-py-to-exe">here</a>
 
-* You can also get the desktop app in 
+* You can also get the desktop app in : ```output/iPyDisp.exe```
 
 
 
