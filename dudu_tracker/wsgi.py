@@ -1,5 +1,5 @@
 """
-WSGI config for django_kmap project.
+WSGI config for dudu_tracker project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_kmap.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dudu_tracker.settings')
 
 application = get_wsgi_application()
