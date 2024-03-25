@@ -1,5 +1,5 @@
-import tkinter as tk
-from PIL import ImageTk, Image
+
+
 import threading
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib

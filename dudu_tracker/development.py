@@ -2,7 +2,12 @@ from .base import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+# config = {
+#     'WEB_DOMAIN': os.getenv('WEB_DOMAIN')
+# }
+
+
+ALLOWED_HOSTS = ['*']
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
