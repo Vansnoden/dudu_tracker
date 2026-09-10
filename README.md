@@ -13,9 +13,9 @@ The current code contains the **Django-web** application and the code for the de
 
 ```iPyDisp.py```
 
-A public version is available at https://dudutracker.monadeware.com
+A public version is available at https://dudutracker.monadware.com
 
-Get help and User guide at: https://dudutracker.monadeware.com/help/
+Get help and User guide at: https://dudutracker.monadware.com/help/
 
 
 # Deployment of the web application in production mode

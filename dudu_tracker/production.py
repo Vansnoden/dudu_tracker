@@ -16,7 +16,9 @@ CSRF_TRUSTED_ORIGINS=[
     "https://dudutracker.monadeware.com", 
     "http://dudutracker.monadeware.com", 
     "http://dudutracker.monadware.com", 
-    "http://dudutracker.icipe.org"
+    "https://dudutracker.monadware.com", 
+    "http://dudutracker.icipe.org",
+    "https://dudutracker.icipe.org"
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
