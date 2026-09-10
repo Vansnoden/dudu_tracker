@@ -14,6 +14,10 @@ import base64
 from django.conf import settings
 from authentication.views import authenticated
 import shutil
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # Create your views here.
 
@@ -106,28 +110,48 @@ def get_outputs(request, index=0):
     
 
 @csrf_exempt
+@authenticated
 def download_data(request):
-    format = request.POST["format"]
-    workspace = Workspace.objects.filter(user=request.user)
-    workspace = workspace[0] if workspace else None
-    if workspace:
-        latest_request = Request.objects.filter(workspace=workspace).order_by("-create_date")
-        request_data = latest_request[0] if latest_request else None
-        if request_data:
-            data_dir = os.path.join(settings.MEDIA_ROOT, f"workspaces/{request_data.workspace.id}/data/{request_data.req_uid}/outputs/{format}")
-            print("### ZIPPING FILE ###")
-            shutil.make_archive(os.path.join(settings.MEDIA_ROOT, f"workspaces/{request_data.workspace.id}/data/{request_data.req_uid}/outputs/{format}_output"), 'zip', data_dir)
-            # output_zip_path = os.path.join(settings.MEDIA_ROOT, f"workspaces/{request_data.workspace.id}/data/{request_data.req_uid}/outputs/{format}_output")
-            url_file = f"{settings.MEDIA_URL}/workspaces/{request_data.workspace.id}/data/{request_data.req_uid}/outputs/{format}_output.zip"
-            return JsonResponse({
-                "file": url_file
-            })
-    else:
-        return JsonResponse({
-                "file": ""
-            })
-    
+    fmt = request.POST.get("format")
+    if not fmt:
+        return JsonResponse({"error": "missing 'format'", "file": ""}, status=400)
 
+    workspace = Workspace.objects.filter(user=request.user).first()
+    if not workspace:
+        logger.warning("download_data: no workspace for user=%s", request.user)
+        return JsonResponse({"error": "no workspace", "file": ""}, status=400)
+
+    request_data = (
+        Request.objects.filter(workspace=workspace).order_by("-create_date").first()
+    )
+    if not request_data:
+        logger.warning("download_data: no request for workspace=%s", workspace.pk)
+        return JsonResponse({"error": "no request", "file": ""}, status=400)
+
+    base_rel = (
+        f"workspaces/{request_data.workspace.id}/data/"
+        f"{request_data.req_uid}/outputs"
+    )
+    src_dir = os.path.join(settings.MEDIA_ROOT, base_rel, fmt)
+    zip_base = os.path.join(settings.MEDIA_ROOT, base_rel, f"{fmt}_output")
+    zip_path = zip_base + ".zip"
+
+    if not os.path.isdir(src_dir):
+        logger.warning("download_data: missing output dir %s", src_dir)
+        return JsonResponse({"error": "output dir missing", "file": ""}, status=404)
+
+    try:
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
+        shutil.make_archive(zip_base, "zip", src_dir)
+    except Exception as e:
+        logger.exception("download_data: zip failed for %s", src_dir)
+        return JsonResponse({"error": str(e), "file": ""}, status=500)
+
+    # rstrip prevents the '/medias//workspaces/...' double slash in your log
+    url_file = f"{settings.MEDIA_URL.rstrip('/')}/{base_rel}/{fmt}_output.zip"
+    return JsonResponse({"file": url_file})
+    
 
 @csrf_exempt
 def process_data_form(request):

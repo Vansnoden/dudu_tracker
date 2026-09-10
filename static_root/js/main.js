@@ -220,4 +220,61 @@ $(document).ready(function(){
     //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     // }).addTo(map);
 
+    $("#download-form").submit(async function (e) {
+        e.preventDefault();
+
+        const form = document.getElementById("download-form");
+        const format = form.querySelector('select[name="format"]').value;
+        const csrf = form.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+
+        const btn = document.getElementById("download-form-btn");
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = "Preparing…";
+
+        try {
+            const res = await fetch("/download_data/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "X-CSRFToken": csrf },
+                body: new URLSearchParams({ format }),
+            });
+
+            const text = await res.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (_) {
+                console.error("download_data: non-JSON response", res.status, text.slice(0, 500));
+                alert("Server error " + res.status + " (see console)");
+                return;
+            }
+
+            if (!res.ok) {
+                console.error("download_data failed", res.status, data);
+                alert("Download failed: " + (data.error || res.status));
+                return;
+            }
+
+            if (!data.file) {
+                alert("No file returned. Has the model been run?");
+                return;
+            }
+
+            // trigger the browser download bar (no new tab)
+            window.location.href = data.file;
+
+            const modalEl = document.getElementById("downloadModal");
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+
+        } catch (err) {
+            console.error("download_data exception", err);
+            alert("Download error: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = original;
+        }
+    });
+
 })

@@ -14,12 +14,9 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    # Dev only: Django serves media/static itself.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
-    # Prod: static should be handled by nginx too, but keep a fallback that
-    # matches whatever MEDIA_URL/STATIC_URL are actually set to.
     static_prefix = settings.STATIC_URL.lstrip('/')
     media_prefix = settings.MEDIA_URL.lstrip('/')
 
