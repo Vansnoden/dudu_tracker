@@ -12,14 +12,7 @@ config = {
 
 DEBUG = True
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS=[
-    "https://dudutracker.monadeware.com", 
-    "http://dudutracker.monadeware.com", 
-    "http://dudutracker.monadware.com", 
-    "https://dudutracker.monadware.com", 
-    "http://dudutracker.icipe.org",
-    "https://dudutracker.icipe.org"
-]
+CSRF_TRUSTED_ORIGINS= os.getenv('ALLOWED_HOSTS').split(';')
 
 AUTH_PASSWORD_VALIDATORS = [
     {

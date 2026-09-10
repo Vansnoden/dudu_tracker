@@ -6,3 +6,4 @@ medias/
 static_root/
 output/
 SAlvador/
+.env
