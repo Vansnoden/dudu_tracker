@@ -7,3 +7,4 @@ static_root/
 output/
 SAlvador/
 .env
+db.sqlite3
