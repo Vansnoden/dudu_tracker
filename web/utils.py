@@ -499,7 +499,7 @@ def run_model(constraints:list, duration=10, start_month='Jan', start_year=2020,
                 ax.set_xlabel("Longitude")
                 ax.set_ylabel("Latitude")
                 # ax.set_title("Dispersal "+currentTimeMonStrg.get()+" "+currentTimeYearStrg.get())
-                ax.set_title(f"Dispersal: {MONTHS[mnth]} {year}")
+                ax.set_title(f"Dispersal: {MONTHS[mnth - 1]} {year}")
                 
                 colrData = {"Unexposed":"blue",
                             "Exposed":"yellow",
