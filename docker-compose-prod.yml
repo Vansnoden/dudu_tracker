@@ -16,7 +16,7 @@ services:
     depends_on:
       - monade_db
   monade_db:
-    image: postgres:13
+    image: postgres:14
     ports:
       - "8014:5432"
     env_file: .env
